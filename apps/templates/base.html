@@ -36,6 +36,8 @@
             background: #f4f6f8;
 
             color: #1f2937;
+
+            overflow-x: hidden;
         }
 
 
@@ -74,6 +76,11 @@
             bottom: 0;
 
             overflow-y: auto;
+
+            z-index: 1000;
+
+            transition:
+                transform .3s ease;
         }
 
 
@@ -146,6 +153,64 @@
 
 
         /* ======================================================
+           BOTÓN CERRAR MENÚ
+        ======================================================= */
+
+        .sidebar-close {
+
+            display: none;
+
+            position: absolute;
+
+            top: 18px;
+
+            right: 15px;
+
+            width: 36px;
+
+            height: 36px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #1f2937;
+
+            color: white;
+
+            font-size: 24px;
+
+            line-height: 1;
+
+            cursor: pointer;
+        }
+
+
+        .sidebar-close:hover {
+
+            background: #374151;
+        }
+
+
+        /* ======================================================
+           OVERLAY
+        ======================================================= */
+
+        .sidebar-overlay {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0, 0, 0, .45);
+
+            z-index: 999;
+        }
+
+
+        /* ======================================================
            MAIN
         ======================================================= */
 
@@ -156,6 +221,10 @@
             width: calc(100% - 250px);
 
             min-height: 100vh;
+
+            transition:
+                margin-left .3s ease,
+                width .3s ease;
         }
 
 
@@ -181,11 +250,61 @@
         }
 
 
+        .topbar-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            min-width: 0;
+        }
+
+
         .topbar-title {
 
             font-size: 18px;
 
             font-weight: 600;
+        }
+
+
+        /* ======================================================
+           BOTÓN MENÚ MÓVIL
+        ======================================================= */
+
+        .menu-toggle {
+
+            display: none;
+
+            width: 42px;
+
+            height: 42px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #111827;
+
+            color: white;
+
+            font-size: 23px;
+
+            cursor: pointer;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+        }
+
+
+        .menu-toggle:hover {
+
+            background: #1f2937;
         }
 
 
@@ -602,7 +721,7 @@
 
 
         /* ======================================================
-           RESPONSIVE
+           TABLET
         ======================================================= */
 
         @media (max-width: 1000px) {
@@ -612,25 +731,133 @@
                 grid-template-columns:
                     repeat(2, 1fr);
             }
+
         }
 
 
+        /* ======================================================
+           CELULAR
+        ======================================================= */
+
         @media (max-width: 700px) {
+
+            /* ----------------------------------------------
+               SIDEBAR OCULTO
+            ---------------------------------------------- */
 
             .sidebar {
 
-                width: 210px;
+                width: 270px;
+
+                transform:
+                    translateX(-100%);
+
+                box-shadow:
+                    5px 0 20px rgba(0, 0, 0, .25);
+
+                padding-top: 24px;
             }
 
+
+            /* ----------------------------------------------
+               SIDEBAR ABIERTO
+            ---------------------------------------------- */
+
+            body.sidebar-open .sidebar {
+
+                transform:
+                    translateX(0);
+            }
+
+
+            /* ----------------------------------------------
+               BOTÓN CERRAR
+            ---------------------------------------------- */
+
+            .sidebar-close {
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+            }
+
+
+            /* ----------------------------------------------
+               OVERLAY
+            ---------------------------------------------- */
+
+            body.sidebar-open .sidebar-overlay {
+
+                display: block;
+            }
+
+
+            /* ----------------------------------------------
+               MAIN OCUPA TODA LA PANTALLA
+            ---------------------------------------------- */
 
             .main {
 
-                margin-left: 210px;
+                margin-left: 0;
 
-                width:
-                    calc(100% - 210px);
+                width: 100%;
             }
 
+
+            /* ----------------------------------------------
+               TOPBAR
+            ---------------------------------------------- */
+
+            .topbar {
+
+                height: 64px;
+
+                padding:
+                    0 10px;
+            }
+
+
+            .topbar-left {
+
+                gap: 8px;
+
+                min-width: 0;
+            }
+
+
+            .menu-toggle {
+
+                display: flex;
+            }
+
+
+            .topbar-title {
+
+                font-size: 18px;
+
+                white-space: nowrap;
+
+                overflow: hidden;
+
+                text-overflow: ellipsis;
+            }
+
+
+            /* ----------------------------------------------
+               CONTENIDO
+            ---------------------------------------------- */
+
+            .content {
+
+                padding: 15px;
+            }
+
+
+            /* ----------------------------------------------
+               CARDS
+            ---------------------------------------------- */
 
             .cards {
 
@@ -638,21 +865,97 @@
             }
 
 
+            /* ----------------------------------------------
+               PERFIL
+            ---------------------------------------------- */
+
+            .user-details {
+
+                display: none;
+            }
+
+
+            .user-profile-link {
+
+                padding:
+                    4px;
+            }
+
+
+            .user-info {
+
+                gap: 0;
+            }
+
+
+            .user-avatar {
+
+                width: 40px;
+
+                height: 40px;
+
+                min-width: 40px;
+            }
+
+
+            /* ----------------------------------------------
+               TABLAS
+            ---------------------------------------------- */
+
+            .table-container {
+
+                overflow-x: auto;
+            }
+
+
+            table {
+
+                min-width: 600px;
+            }
+
+
+            /* ----------------------------------------------
+               FORMULARIOS
+            ---------------------------------------------- */
+
+            .form-container {
+
+                max-width: 100%;
+
+                padding: 18px;
+            }
+
+        }
+
+
+        /* ======================================================
+           CELULARES MUY PEQUEÑOS
+        ======================================================= */
+
+        @media (max-width: 400px) {
+
+            .sidebar {
+
+                width: 260px;
+            }
+
+
             .topbar {
 
-                padding: 0 15px;
+                padding:
+                    0 8px;
+            }
+
+
+            .topbar-title {
+
+                font-size: 16px;
             }
 
 
             .content {
 
-                padding: 20px;
-            }
-
-
-            .user-details {
-
-                display: none;
+                padding: 10px;
             }
 
         }
@@ -676,6 +979,18 @@
     ======================================================= -->
 
     <aside class="sidebar">
+
+
+        <!-- BOTÓN CERRAR EN CELULAR -->
+
+        <button
+            type="button"
+            class="sidebar-close"
+            id="sidebarClose"
+            aria-label="Cerrar menú"
+        >
+            ×
+        </button>
 
 
         <div class="logo">
@@ -992,6 +1307,16 @@
 
 
     <!-- ======================================================
+         OVERLAY
+    ======================================================= -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+    ></div>
+
+
+    <!-- ======================================================
          MAIN
     ======================================================= -->
 
@@ -1005,13 +1330,38 @@
         <header class="topbar">
 
 
-            <div class="topbar-title">
+            <div class="topbar-left">
 
-                {% block page_title %}
 
-                    Dashboard
+                <!-- BOTÓN MENÚ -->
 
-                {% endblock %}
+                {% if current_user.is_authenticated %}
+
+                    <button
+                        type="button"
+                        class="menu-toggle"
+                        id="menuToggle"
+                        aria-label="Abrir menú"
+                        aria-expanded="false"
+                    >
+
+                        ☰
+
+                    </button>
+
+                {% endif %}
+
+
+                <div class="topbar-title">
+
+                    {% block page_title %}
+
+                        Dashboard
+
+                    {% endblock %}
+
+                </div>
+
 
             </div>
 
@@ -1166,6 +1516,164 @@
 
 
 </div>
+
+
+<!-- ======================================================
+     JAVASCRIPT MENÚ MÓVIL
+======================================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const menuToggle =
+                document.getElementById(
+                    "menuToggle"
+                );
+
+            const sidebarClose =
+                document.getElementById(
+                    "sidebarClose"
+                );
+
+            const sidebarOverlay =
+                document.getElementById(
+                    "sidebarOverlay"
+                );
+
+            const menuLinks =
+                document.querySelectorAll(
+                    ".sidebar .menu a"
+                );
+
+
+            function abrirMenu() {
+
+                document.body.classList.add(
+                    "sidebar-open"
+                );
+
+                if (menuToggle) {
+
+                    menuToggle.setAttribute(
+                        "aria-expanded",
+                        "true"
+                    );
+
+                }
+
+            }
+
+
+            function cerrarMenu() {
+
+                document.body.classList.remove(
+                    "sidebar-open"
+                );
+
+                if (menuToggle) {
+
+                    menuToggle.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                }
+
+            }
+
+
+            if (menuToggle) {
+
+                menuToggle.addEventListener(
+                    "click",
+                    abrirMenu
+                );
+
+            }
+
+
+            if (sidebarClose) {
+
+                sidebarClose.addEventListener(
+                    "click",
+                    cerrarMenu
+                );
+
+            }
+
+
+            if (sidebarOverlay) {
+
+                sidebarOverlay.addEventListener(
+                    "click",
+                    cerrarMenu
+                );
+
+            }
+
+
+            menuLinks.forEach(
+                function (link) {
+
+                    link.addEventListener(
+                        "click",
+                        function () {
+
+                            cerrarMenu();
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /* ==============================================
+               CERRAR CON ESC
+            ============================================== */
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Escape"
+                    ) {
+
+                        cerrarMenu();
+
+                    }
+
+                }
+            );
+
+
+            /* ==============================================
+               SI CAMBIA A PANTALLA GRANDE
+            ============================================== */
+
+            window.addEventListener(
+                "resize",
+                function () {
+
+                    if (
+                        window.innerWidth > 700
+                    ) {
+
+                        cerrarMenu();
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+</script>
 
 
 {% block extra_js %}{% endblock %}
