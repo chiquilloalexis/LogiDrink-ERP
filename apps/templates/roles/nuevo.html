@@ -42,10 +42,6 @@ Nuevo rol
 >
 
 
-    <!-- ======================================================
-         INFORMACIÓN DEL ROL
-    ======================================================= -->
-
     <div class="form-group">
 
         <label>
@@ -55,7 +51,7 @@ Nuevo rol
         <input
             type="text"
             name="nombre"
-            placeholder="Ejemplo: Vendedor"
+            placeholder="Ejemplo: Supervisor de ventas"
             required
         >
 
@@ -77,11 +73,36 @@ Nuevo rol
     </div>
 
 
-    <!-- ======================================================
-         PERMISOS
-    ======================================================= -->
+    <div
+        style="
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            margin:25px 0 15px;
+        "
+    >
 
-    <h2 style="margin:30px 0 15px;">
+        <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="seleccionarTodos()"
+        >
+            Seleccionar todo
+        </button>
+
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="limpiarTodos()"
+        >
+            Limpiar todo
+        </button>
+
+    </div>
+
+
+    <h2 style="margin:20px 0 15px;">
         Permisos
     </h2>
 
@@ -138,14 +159,17 @@ Nuevo rol
                                     {{ modulo.nombre }}
                                 </strong>
 
+
                                 {% if modulo.descripcion %}
 
                                     <div
-                                        style="font-size:12px; color:#6b7280;"
+                                        style="
+                                            font-size:12px;
+                                            color:#6b7280;
+                                            margin-top:3px;
+                                        "
                                     >
-
                                         {{ modulo.descripcion }}
-
                                     </div>
 
                                 {% endif %}
@@ -154,52 +178,47 @@ Nuevo rol
 
 
                             <td>
-
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="ver_{{ modulo.id }}"
                                 >
-
                             </td>
 
 
                             <td>
-
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="crear_{{ modulo.id }}"
                                 >
-
                             </td>
 
 
                             <td>
-
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="editar_{{ modulo.id }}"
                                 >
-
                             </td>
 
 
                             <td>
-
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="eliminar_{{ modulo.id }}"
                                 >
-
                             </td>
 
 
                             <td>
-
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="reportes_{{ modulo.id }}"
                                 >
-
                             </td>
 
                         </tr>
@@ -235,10 +254,6 @@ Nuevo rol
     {% endif %}
 
 
-    <!-- ======================================================
-         BOTONES
-    ======================================================= -->
-
     <div
         class="actions"
         style="margin-top:25px;"
@@ -248,9 +263,7 @@ Nuevo rol
             type="submit"
             class="btn btn-primary"
         >
-
             Guardar rol
-
         </button>
 
 
@@ -258,15 +271,43 @@ Nuevo rol
             href="{{ url_for('roles.index') }}"
             class="btn btn-secondary"
         >
-
             Cancelar
-
         </a>
 
     </div>
 
 
 </form>
+
+
+<script>
+
+function seleccionarTodos() {
+
+    document
+        .querySelectorAll(".permiso-checkbox")
+        .forEach(function(checkbox) {
+
+            checkbox.checked = true;
+
+        });
+
+}
+
+
+function limpiarTodos() {
+
+    document
+        .querySelectorAll(".permiso-checkbox")
+        .forEach(function(checkbox) {
+
+            checkbox.checked = false;
+
+        });
+
+}
+
+</script>
 
 
 {% endblock %}
