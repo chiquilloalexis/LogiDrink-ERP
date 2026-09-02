@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% block title %}
 
 Roles | LogiDrink ERP
@@ -61,6 +62,10 @@ Roles y permisos
                 </th>
 
                 <th>
+                    Tipo
+                </th>
+
+                <th>
                     Usuarios
                 </th>
 
@@ -101,6 +106,44 @@ Roles y permisos
 
                     <td>
 
+                        {% set nombre_rol = rol.nombre.strip().lower() %}
+
+                        {% if nombre_rol in [
+                            "administrador",
+                            "admin",
+                            "cajero",
+                            "vendedor",
+                            "mesero",
+                            "bodeguero"
+                        ] %}
+
+                            <span
+                                style="
+                                    color:#2563eb;
+                                    font-weight:600;
+                                "
+                            >
+                                Predeterminado
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                style="
+                                    color:#7c3aed;
+                                    font-weight:600;
+                                "
+                            >
+                                Personalizado
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
                         {{ rol.usuarios|length }}
 
                     </td>
@@ -110,13 +153,23 @@ Roles y permisos
 
                         {% if rol.activo %}
 
-                            <span style="color:#16a34a; font-weight:600;">
+                            <span
+                                style="
+                                    color:#16a34a;
+                                    font-weight:600;
+                                "
+                            >
                                 Activo
                             </span>
 
                         {% else %}
 
-                            <span style="color:#dc2626; font-weight:600;">
+                            <span
+                                style="
+                                    color:#dc2626;
+                                    font-weight:600;
+                                "
+                            >
                                 Inactivo
                             </span>
 
@@ -127,42 +180,97 @@ Roles y permisos
 
                     <td>
 
-                        <div class="actions">
+                        <div
+                            class="actions"
+                            style="
+                                display:flex;
+                                gap:6px;
+                                flex-wrap:wrap;
+                            "
+                        >
 
                             <a
                                 href="{{ url_for('roles.editar', id=rol.id) }}"
                                 class="btn btn-secondary"
                             >
-
                                 Editar permisos
-
                             </a>
 
 
                             <form
                                 method="POST"
-                                action="{{ url_for('roles.activar', id=rol.id) }}"
+                                action="{{ url_for('roles.clonar', id=rol.id) }}"
                                 style="display:inline;"
                             >
 
                                 <button
                                     type="submit"
-                                    class="btn {% if rol.activo %}btn-danger{% else %}btn-primary{% endif %}"
+                                    class="btn btn-secondary"
                                 >
-
-                                    {% if rol.activo %}
-
-                                        Desactivar
-
-                                    {% else %}
-
-                                        Activar
-
-                                    {% endif %}
-
+                                    Clonar
                                 </button>
 
                             </form>
+
+
+                            {% set nombre_rol = rol.nombre.strip().lower() %}
+
+
+                            {% if nombre_rol not in [
+                                "administrador",
+                                "admin"
+                            ] %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('roles.activar', id=rol.id) }}"
+                                    style="display:inline;"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn {% if rol.activo %}btn-danger{% else %}btn-primary{% endif %}"
+                                    >
+
+                                        {% if rol.activo %}
+                                            Desactivar
+                                        {% else %}
+                                            Activar
+                                        {% endif %}
+
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+
+                            {% if nombre_rol not in [
+                                "administrador",
+                                "admin",
+                                "cajero",
+                                "vendedor",
+                                "mesero",
+                                "bodeguero"
+                            ] %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('roles.eliminar', id=rol.id) }}"
+                                    style="display:inline;"
+                                    onsubmit="return confirm('¿Seguro que deseas eliminar este rol?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                    >
+                                        Eliminar
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
 
                         </div>
 
@@ -170,13 +278,17 @@ Roles y permisos
 
                 </tr>
 
+
             {% else %}
 
                 <tr>
 
                     <td
-                        colspan="5"
-                        style="text-align:center; padding:30px;"
+                        colspan="6"
+                        style="
+                            text-align:center;
+                            padding:30px;
+                        "
                     >
 
                         No hay roles registrados.
