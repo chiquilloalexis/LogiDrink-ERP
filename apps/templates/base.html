@@ -1007,6 +1007,32 @@
 
 
             <!-- ==================================================
+                 PRINCIPAL
+            =================================================== -->
+
+            <div class="menu-title">
+
+                Principal
+
+            </div>
+
+
+            <!-- DASHBOARD -->
+
+            {% if current_user.is_authenticated %}
+
+                <a
+                    href="{{ url_for('dashboard.index') }}"
+                >
+
+                    Dashboard
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- ==================================================
                  SUPERADMINISTRADOR
             =================================================== -->
 
@@ -1652,16 +1678,40 @@
 
 
 {% block extra_js %}{% endblock %}
+
+
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}")
-        .then(() => console.log('Service Worker registrado'))
-        .catch(err => console.error('Error SW:', err));
-    });
-  }
+
+    if ('serviceWorker' in navigator) {
+
+        window.addEventListener(
+            'load',
+            () => {
+
+                navigator.serviceWorker.register(
+                    "{{ url_for('static', filename='sw.js') }}"
+                )
+
+                .then(
+                    () => console.log(
+                        'Service Worker registrado'
+                    )
+                )
+
+                .catch(
+                    err => console.error(
+                        'Error SW:',
+                        err
+                    )
+                );
+
+            }
+        );
+
+    }
+
 </script>
-    
+
 
 </body>
 
