@@ -15,6 +15,7 @@ from apps.models import (
     Permiso,
     EmpresaModulo
 )
+
 from apps.utils.decoradores import verificar_admin_empresa
 
 
@@ -26,10 +27,61 @@ roles_bp = Blueprint(
 
 
 # ==========================================================
+# ROLES PREDETERMINADOS
+# ==========================================================
+
+ROLES_PREDETERMINADOS = {
+    "administrador",
+    "admin",
+    "cajero",
+    "vendedor",
+    "mesero",
+    "bodeguero"
+}
+
+
+# ==========================================================
+# PERMISOS PREDETERMINADOS
+# ==========================================================
+
+PERMISOS_PREDETERMINADOS = {
+
+    "cajero": {
+        "ventas": ["ver", "crear"],
+        "facturación": ["ver", "crear"],
+        "clientes": ["ver", "crear", "editar"],
+        "caja": ["ver", "crear"],
+    },
+
+    "vendedor": {
+        "ventas": ["ver", "crear"],
+        "facturación": ["ver", "crear"],
+        "clientes": ["ver", "crear", "editar"],
+        "productos": ["ver"],
+    },
+
+    "mesero": {
+        "ventas": ["ver", "crear"],
+        "productos": ["ver"],
+    },
+
+    "bodeguero": {
+        "inventario": ["ver", "crear", "editar"],
+        "productos": ["ver", "crear", "editar"],
+        "compras": ["ver", "crear", "editar"],
+        "proveedores": ["ver", "crear", "editar"],
+    }
+}
+
+
+# ==========================================================
 # OBTENER MÓDULOS ACTIVOS DE LA EMPRESA
 # ==========================================================
 
 def obtener_modulos_empresa():
+
+    if not current_user.empresa_id:
+        return []
 
     asignaciones = db.session.execute(
         db.select(EmpresaModulo)
@@ -60,6 +112,158 @@ def obtener_modulos_empresa():
 
 
 # ==========================================================
+# NORMALIZAR NOMBRE
+# ==========================================================
+
+def normalizar_nombre(valor):
+
+    if not valor:
+        return ""
+
+    return (
+        valor
+        .strip()
+        .lower()
+    )
+
+
+# ==========================================================
+# DETERMINAR SI ES ROL PREDETERMINADO
+# ==========================================================
+
+def es_rol_predeterminado(rol):
+
+    return (
+        normalizar_nombre(rol.nombre)
+        in ROLES_PREDETERMINADOS
+    )
+
+
+# ==========================================================
+# CREAR / ACTUALIZAR PERMISOS PREDETERMINADOS
+# ==========================================================
+
+def aplicar_permisos_predeterminados(rol, modulos):
+
+    nombre_rol = normalizar_nombre(
+        rol.nombre
+    )
+
+    permisos_existentes = {
+        normalizar_nombre(permiso.modulo): permiso
+        for permiso in rol.permisos
+        if permiso.modulo
+    }
+
+    if nombre_rol in ("administrador", "admin"):
+
+        permisos_por_modulo = {}
+
+        for modulo in modulos:
+
+            nombre_modulo = normalizar_nombre(
+                modulo.nombre
+            )
+
+            permisos_por_modulo[
+                nombre_modulo
+            ] = [
+                "ver",
+                "crear",
+                "editar",
+                "eliminar",
+                "reportes"
+            ]
+
+    else:
+
+        permisos_por_modulo = (
+            PERMISOS_PREDETERMINADOS.get(
+                nombre_rol,
+                {}
+            )
+        )
+
+    for modulo in modulos:
+
+        nombre_modulo = normalizar_nombre(
+            modulo.nombre
+        )
+
+        acciones = permisos_por_modulo.get(
+            nombre_modulo,
+            []
+        )
+
+        permiso = permisos_existentes.get(
+            nombre_modulo
+        )
+
+        if permiso is None:
+
+            permiso = Permiso(
+                rol_id=rol.id,
+                modulo=modulo.nombre,
+                ver=False,
+                crear=False,
+                editar=False,
+                eliminar=False,
+                reportes=False
+            )
+
+            db.session.add(
+                permiso
+            )
+
+        # --------------------------------------------------
+        # SOLO APLICAR AUTOMATICAMENTE A ROLES PREDETERMINADOS
+        # --------------------------------------------------
+
+        permiso.ver = "ver" in acciones
+        permiso.crear = "crear" in acciones
+        permiso.editar = "editar" in acciones
+        permiso.eliminar = "eliminar" in acciones
+        permiso.reportes = "reportes" in acciones
+
+
+# ==========================================================
+# SINCRONIZAR ADMINISTRADOR
+# ==========================================================
+
+def sincronizar_administradores_empresa():
+
+    if not current_user.empresa_id:
+        return
+
+    modulos = obtener_modulos_empresa()
+
+    roles = db.session.execute(
+        db.select(Rol)
+        .where(
+            Rol.empresa_id == current_user.empresa_id
+        )
+    ).scalars().all()
+
+    for rol in roles:
+
+        nombre = normalizar_nombre(
+            rol.nombre
+        )
+
+        if nombre in (
+            "administrador",
+            "admin"
+        ):
+
+            aplicar_permisos_predeterminados(
+                rol,
+                modulos
+            )
+
+    db.session.commit()
+
+
+# ==========================================================
 # LISTADO DE ROLES
 # ==========================================================
 
@@ -67,6 +271,12 @@ def obtener_modulos_empresa():
 @login_required
 @verificar_admin_empresa
 def index():
+
+    # ------------------------------------------------------
+    # ASEGURAR PERMISOS DE ROLES PREDETERMINADOS
+    # ------------------------------------------------------
+
+    modulos = obtener_modulos_empresa()
 
     roles = db.session.execute(
         db.select(Rol)
@@ -77,6 +287,17 @@ def index():
             Rol.nombre.asc()
         )
     ).scalars().all()
+
+    for rol in roles:
+
+        if es_rol_predeterminado(rol):
+
+            aplicar_permisos_predeterminados(
+                rol,
+                modulos
+            )
+
+    db.session.commit()
 
     return render_template(
         "roles/index.html",
@@ -121,10 +342,6 @@ def nuevo():
                 url_for("roles.nuevo")
             )
 
-        # ==================================================
-        # VERIFICAR NOMBRE DUPLICADO
-        # ==================================================
-
         rol_existente = db.session.execute(
             db.select(Rol)
             .where(
@@ -144,10 +361,6 @@ def nuevo():
                 url_for("roles.nuevo")
             )
 
-        # ==================================================
-        # CREAR ROL
-        # ==================================================
-
         rol = Rol(
             empresa_id=current_user.empresa_id,
             nombre=nombre,
@@ -159,9 +372,9 @@ def nuevo():
 
         db.session.flush()
 
-        # ==================================================
-        # CREAR PERMISOS
-        # ==================================================
+        # --------------------------------------------------
+        # PERMISOS SELECCIONADOS MANUALMENTE
+        # --------------------------------------------------
 
         for modulo in modulos:
 
@@ -259,10 +472,6 @@ def editar(id):
                 )
             )
 
-        # ==================================================
-        # VERIFICAR NOMBRE
-        # ==================================================
-
         rol_existente = db.session.execute(
             db.select(Rol)
             .where(
@@ -286,35 +495,21 @@ def editar(id):
                 )
             )
 
-        # ==================================================
-        # ACTUALIZAR ROL
-        # ==================================================
-
         rol.nombre = nombre
         rol.descripcion = descripcion or None
 
-        # ==================================================
-        # PERMISOS EXISTENTES
-        # ==================================================
-
         permisos_existentes = {
-            permiso.modulo.strip().lower(): permiso
+            normalizar_nombre(permiso.modulo): permiso
             for permiso in rol.permisos
             if permiso.modulo
         }
 
         nombres_modulos_activos = set()
 
-        # ==================================================
-        # ACTUALIZAR PERMISOS
-        # ==================================================
-
         for modulo in modulos:
 
-            nombre_modulo = (
+            nombre_modulo = normalizar_nombre(
                 modulo.nombre
-                .strip()
-                .lower()
             )
 
             nombres_modulos_activos.add(
@@ -325,31 +520,6 @@ def editar(id):
                 modulo.id
             )
 
-            ver = (
-                f"ver_{modulo_id}"
-                in request.form
-            )
-
-            crear = (
-                f"crear_{modulo_id}"
-                in request.form
-            )
-
-            editar = (
-                f"editar_{modulo_id}"
-                in request.form
-            )
-
-            eliminar = (
-                f"eliminar_{modulo_id}"
-                in request.form
-            )
-
-            reportes = (
-                f"reportes_{modulo_id}"
-                in request.form
-            )
-
             permiso = permisos_existentes.get(
                 nombre_modulo
             )
@@ -358,29 +528,54 @@ def editar(id):
 
                 permiso = Permiso(
                     rol_id=rol.id,
-                    modulo=modulo.nombre
+                    modulo=modulo.nombre,
+                    ver=False,
+                    crear=False,
+                    editar=False,
+                    eliminar=False,
+                    reportes=False
                 )
 
                 db.session.add(
                     permiso
                 )
 
-            permiso.ver = ver
-            permiso.crear = crear
-            permiso.editar = editar
-            permiso.eliminar = eliminar
-            permiso.reportes = reportes
+            permiso.ver = (
+                f"ver_{modulo_id}"
+                in request.form
+            )
 
-        # ==================================================
-        # DESACTIVAR PERMISOS DE MÓDULOS NO ACTIVOS
-        # ==================================================
+            permiso.crear = (
+                f"crear_{modulo_id}"
+                in request.form
+            )
+
+            permiso.editar = (
+                f"editar_{modulo_id}"
+                in request.form
+            )
+
+            permiso.eliminar = (
+                f"eliminar_{modulo_id}"
+                in request.form
+            )
+
+            permiso.reportes = (
+                f"reportes_{modulo_id}"
+                in request.form
+            )
+
+        # --------------------------------------------------
+        # DESACTIVAR PERMISOS DE MODULOS NO CONTRATADOS
+        # --------------------------------------------------
 
         for permiso in rol.permisos:
 
             if (
                 permiso.modulo
-                and permiso.modulo.strip().lower()
-                not in nombres_modulos_activos
+                and normalizar_nombre(
+                    permiso.modulo
+                ) not in nombres_modulos_activos
             ):
 
                 permiso.ver = False
@@ -400,12 +595,8 @@ def editar(id):
             url_for("roles.index")
         )
 
-    # ==================================================
-    # MOSTRAR PERMISOS ACTUALES
-    # ==================================================
-
     permisos = {
-        permiso.modulo.strip().lower(): permiso
+        normalizar_nombre(permiso.modulo): permiso
         for permiso in rol.permisos
         if permiso.modulo
     }
@@ -415,6 +606,183 @@ def editar(id):
         rol=rol,
         modulos=modulos,
         permisos=permisos
+    )
+
+
+# ==========================================================
+# CLONAR ROL
+# ==========================================================
+
+@roles_bp.route(
+    "/clonar/<int:id>",
+    methods=["POST"]
+)
+@login_required
+@verificar_admin_empresa
+def clonar(id):
+
+    rol_original = db.session.execute(
+        db.select(Rol)
+        .where(
+            Rol.id == id,
+            Rol.empresa_id == current_user.empresa_id
+        )
+    ).scalar_one_or_none()
+
+    if rol_original is None:
+
+        flash(
+            "El rol que intentas clonar no existe.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("roles.index")
+        )
+
+    nuevo_nombre = (
+        f"{rol_original.nombre} copia"
+    )
+
+    contador = 2
+
+    while True:
+
+        existe = db.session.execute(
+            db.select(Rol)
+            .where(
+                Rol.empresa_id == current_user.empresa_id,
+                db.func.lower(Rol.nombre)
+                == nuevo_nombre.lower()
+            )
+        ).scalar_one_or_none()
+
+        if not existe:
+            break
+
+        nuevo_nombre = (
+            f"{rol_original.nombre} copia {contador}"
+        )
+
+        contador += 1
+
+    nuevo_rol = Rol(
+        empresa_id=current_user.empresa_id,
+        nombre=nuevo_nombre,
+        descripcion=rol_original.descripcion,
+        activo=True
+    )
+
+    db.session.add(
+        nuevo_rol
+    )
+
+    db.session.flush()
+
+    for permiso in rol_original.permisos:
+
+        nuevo_permiso = Permiso(
+            rol_id=nuevo_rol.id,
+            modulo=permiso.modulo,
+            ver=permiso.ver,
+            crear=permiso.crear,
+            editar=permiso.editar,
+            eliminar=permiso.eliminar,
+            reportes=permiso.reportes
+        )
+
+        db.session.add(
+            nuevo_permiso
+        )
+
+    db.session.commit()
+
+    flash(
+        f"Rol clonado correctamente como '{nuevo_nombre}'.",
+        "success"
+    )
+
+    return redirect(
+        url_for("roles.editar", id=nuevo_rol.id)
+    )
+
+
+# ==========================================================
+# ELIMINAR ROL
+# ==========================================================
+
+@roles_bp.route(
+    "/eliminar/<int:id>",
+    methods=["POST"]
+)
+@login_required
+@verificar_admin_empresa
+def eliminar(id):
+
+    rol = db.session.execute(
+        db.select(Rol)
+        .where(
+            Rol.id == id,
+            Rol.empresa_id == current_user.empresa_id
+        )
+    ).scalar_one_or_none()
+
+    if rol is None:
+
+        flash(
+            "El rol no existe.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("roles.index")
+        )
+
+    # ------------------------------------------------------
+    # PROTEGER ROLES PREDETERMINADOS
+    # ------------------------------------------------------
+
+    if es_rol_predeterminado(rol):
+
+        flash(
+            "Los roles predeterminados del sistema no se pueden eliminar.",
+            "warning"
+        )
+
+        return redirect(
+            url_for("roles.index")
+        )
+
+    # ------------------------------------------------------
+    # NO ELIMINAR SI TIENE USUARIOS
+    # ------------------------------------------------------
+
+    if len(rol.usuarios) > 0:
+
+        flash(
+            "No puedes eliminar este rol porque tiene usuarios asignados.",
+            "warning"
+        )
+
+        return redirect(
+            url_for("roles.index")
+        )
+
+    nombre = rol.nombre
+
+    db.session.delete(
+        rol
+    )
+
+    db.session.commit()
+
+    flash(
+        f"El rol '{nombre}' fue eliminado correctamente.",
+        "success"
+    )
+
+    return redirect(
+        url_for("roles.index")
     )
 
 
@@ -449,21 +817,35 @@ def activar(id):
             url_for("roles.index")
         )
 
-    # ==================================================
+    # ------------------------------------------------------
+    # PROTEGER ADMINISTRADOR
+    # ------------------------------------------------------
+
+    if (
+        es_rol_predeterminado(rol)
+        and normalizar_nombre(rol.nombre)
+        in ("administrador", "admin")
+    ):
+
+        flash(
+            "El rol Administrador no puede ser desactivado.",
+            "warning"
+        )
+
+        return redirect(
+            url_for("roles.index")
+        )
+
+    # ------------------------------------------------------
     # NO DESACTIVAR SI TIENE USUARIOS
-    # ==================================================
+    # ------------------------------------------------------
 
     if rol.activo:
 
-        usuarios_asignados = len(
-            rol.usuarios
-        )
-
-        if usuarios_asignados > 0:
+        if len(rol.usuarios) > 0:
 
             flash(
-                "No puedes desactivar este rol porque "
-                "tiene usuarios asignados.",
+                "No puedes desactivar este rol porque tiene usuarios asignados.",
                 "warning"
             )
 
