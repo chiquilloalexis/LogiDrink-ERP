@@ -29,22 +29,34 @@ productos_bp = Blueprint(
 @login_required
 def index():
 
-    busqueda = request.args.get("buscar", "").strip()
+    busqueda = request.args.get(
+        "buscar",
+        ""
+    ).strip()
 
     consulta = db.select(Producto).where(
         Producto.empresa_id == current_user.empresa_id
     )
 
     if busqueda:
+
         consulta = consulta.where(
             db.or_(
-                Producto.nombre.ilike(f"%{busqueda}%"),
-                Producto.codigo.ilike(f"%{busqueda}%"),
-                Producto.categoria.ilike(f"%{busqueda}%")
+                Producto.nombre.ilike(
+                    f"%{busqueda}%"
+                ),
+                Producto.codigo.ilike(
+                    f"%{busqueda}%"
+                ),
+                Producto.categoria.ilike(
+                    f"%{busqueda}%"
+                )
             )
         )
 
-    consulta = consulta.order_by(Producto.id.desc())
+    consulta = consulta.order_by(
+        Producto.id.desc()
+    )
 
     productos = db.session.execute(
         consulta
@@ -85,7 +97,10 @@ def imagen(id):
 # CREAR PRODUCTO
 # ==========================================
 
-@productos_bp.route("/nuevo", methods=["GET", "POST"])
+@productos_bp.route(
+    "/nuevo",
+    methods=["GET", "POST"]
+)
 @login_required
 def nuevo():
 
@@ -111,7 +126,6 @@ def nuevo():
             ""
         ).strip()
 
-
         precio_compra = request.form.get(
             "precio_compra",
             "0"
@@ -121,7 +135,6 @@ def nuevo():
             "precio_venta",
             "0"
         )
-
 
         precio_compra_caja = request.form.get(
             "precio_compra_caja",
@@ -133,7 +146,6 @@ def nuevo():
             "0"
         )
 
-
         stock = request.form.get(
             "stock",
             "0"
@@ -144,12 +156,10 @@ def nuevo():
             "0"
         )
 
-
         unidades_por_caja = request.form.get(
             "unidades_por_caja",
             "1"
         )
-
 
         maneja_cajas = request.form.get(
             "maneja_cajas"
@@ -160,7 +170,6 @@ def nuevo():
             "si",
             "yes"
         )
-
 
         # ==========================================
         # VALIDACIÓN BÁSICA
@@ -177,7 +186,6 @@ def nuevo():
                 "productos/nuevo.html"
             )
 
-
         # ==========================================
         # VALIDAR CÓDIGO DUPLICADO
         # ==========================================
@@ -189,7 +197,6 @@ def nuevo():
             )
         ).scalar_one_or_none()
 
-
         if producto_existente:
 
             flash(
@@ -200,7 +207,6 @@ def nuevo():
             return render_template(
                 "productos/nuevo.html"
             )
-
 
         try:
 
@@ -236,7 +242,6 @@ def nuevo():
                 unidades_por_caja or 1
             )
 
-
             # ==========================================
             # VALIDACIONES
             # ==========================================
@@ -247,13 +252,11 @@ def nuevo():
                     "Las unidades por caja deben ser mayores que cero."
                 )
 
-
             if stock_valor < 0:
 
                 raise ValueError(
                     "El stock no puede ser negativo."
                 )
-
 
             if stock_minimo_valor < 0:
 
@@ -261,13 +264,11 @@ def nuevo():
                     "El stock mínimo no puede ser negativo."
                 )
 
-
             if precio_compra_valor < 0:
 
                 raise ValueError(
                     "El precio de compra no puede ser negativo."
                 )
-
 
             if precio_venta_valor < 0:
 
@@ -275,20 +276,17 @@ def nuevo():
                     "El precio de venta no puede ser negativo."
                 )
 
-
             if precio_compra_caja_valor < 0:
 
                 raise ValueError(
                     "El precio de compra por caja no puede ser negativo."
                 )
 
-
             if precio_venta_caja_valor < 0:
 
                 raise ValueError(
                     "El precio de venta por caja no puede ser negativo."
                 )
-
 
             # ==========================================
             # IMAGEN
@@ -301,7 +299,6 @@ def nuevo():
             imagen_bytes = None
             imagen_tipo = None
 
-
             if archivo_imagen and archivo_imagen.filename:
 
                 tipos_permitidos = {
@@ -311,16 +308,13 @@ def nuevo():
                     "image/gif"
                 }
 
-
                 if archivo_imagen.mimetype not in tipos_permitidos:
 
                     raise ValueError(
                         "La imagen debe ser JPG, PNG, WEBP o GIF."
                     )
 
-
                 imagen_bytes = archivo_imagen.read()
-
 
                 if not imagen_bytes:
 
@@ -328,16 +322,13 @@ def nuevo():
                         "No se pudo leer la imagen seleccionada."
                     )
 
-
                 if len(imagen_bytes) > 5 * 1024 * 1024:
 
                     raise ValueError(
                         "La imagen no puede superar los 5 MB."
                     )
 
-
                 imagen_tipo = archivo_imagen.mimetype
-
 
             # ==========================================
             # CREAR PRODUCTO
@@ -355,15 +346,9 @@ def nuevo():
 
                 categoria=categoria or None,
 
-
-                # IMAGEN
-
                 imagen=imagen_bytes,
 
                 imagen_tipo=imagen_tipo,
-
-
-                # PRECIOS
 
                 precio_compra=precio_compra_valor,
 
@@ -373,9 +358,6 @@ def nuevo():
 
                 precio_venta_caja=precio_venta_caja_valor,
 
-
-                # INVENTARIO
-
                 stock=stock_valor,
 
                 stock_minimo=stock_minimo_valor,
@@ -384,12 +366,8 @@ def nuevo():
 
                 maneja_cajas=maneja_cajas,
 
-
-                # ESTADO
-
                 activo=True
             )
-
 
             db.session.add(
                 producto
@@ -397,28 +375,23 @@ def nuevo():
 
             db.session.commit()
 
-
             flash(
                 "Producto creado correctamente.",
                 "success"
             )
 
-
             return redirect(
                 url_for("productos.index")
             )
-
 
         except (ValueError, TypeError) as error:
 
             db.session.rollback()
 
-
             flash(
                 str(error),
                 "danger"
             )
-
 
     return render_template(
         "productos/nuevo.html"
@@ -443,7 +416,6 @@ def editar(id):
         )
     ).scalar_one_or_none()
 
-
     if producto is None:
 
         flash(
@@ -454,7 +426,6 @@ def editar(id):
         return redirect(
             url_for("productos.index")
         )
-
 
     if request.method == "POST":
 
@@ -478,7 +449,6 @@ def editar(id):
             ""
         ).strip()
 
-
         # ==========================================
         # VALIDACIÓN BÁSICA
         # ==========================================
@@ -495,7 +465,6 @@ def editar(id):
                 producto=producto
             )
 
-
         # ==========================================
         # VALIDAR CÓDIGO DUPLICADO
         # ==========================================
@@ -508,7 +477,6 @@ def editar(id):
             )
         ).scalar_one_or_none()
 
-
         if producto_existente:
 
             flash(
@@ -520,7 +488,6 @@ def editar(id):
                 "productos/editar.html",
                 producto=producto
             )
-
 
         try:
 
@@ -535,14 +502,12 @@ def editar(id):
                 ) or 0
             )
 
-
             precio_venta = float(
                 request.form.get(
                     "precio_venta",
                     0
                 ) or 0
             )
-
 
             precio_compra_caja = float(
                 request.form.get(
@@ -551,14 +516,12 @@ def editar(id):
                 ) or 0
             )
 
-
             precio_venta_caja = float(
                 request.form.get(
                     "precio_venta_caja",
                     0
                 ) or 0
             )
-
 
             stock = int(
                 request.form.get(
@@ -567,7 +530,6 @@ def editar(id):
                 ) or 0
             )
 
-
             stock_minimo = int(
                 request.form.get(
                     "stock_minimo",
@@ -575,14 +537,12 @@ def editar(id):
                 ) or 0
             )
 
-
             unidades_por_caja = int(
                 request.form.get(
                     "unidades_por_caja",
                     1
                 ) or 1
             )
-
 
             maneja_cajas = request.form.get(
                 "maneja_cajas"
@@ -594,7 +554,6 @@ def editar(id):
                 "yes"
             )
 
-
             # ==========================================
             # VALIDACIONES
             # ==========================================
@@ -605,13 +564,11 @@ def editar(id):
                     "Las unidades por caja deben ser mayores que cero."
                 )
 
-
             if stock < 0:
 
                 raise ValueError(
                     "El stock no puede ser negativo."
                 )
-
 
             if stock_minimo < 0:
 
@@ -619,13 +576,11 @@ def editar(id):
                     "El stock mínimo no puede ser negativo."
                 )
 
-
             if precio_compra < 0:
 
                 raise ValueError(
                     "El precio de compra no puede ser negativo."
                 )
-
 
             if precio_venta < 0:
 
@@ -633,20 +588,17 @@ def editar(id):
                     "El precio de venta no puede ser negativo."
                 )
 
-
             if precio_compra_caja < 0:
 
                 raise ValueError(
                     "El precio de compra por caja no puede ser negativo."
                 )
 
-
             if precio_venta_caja < 0:
 
                 raise ValueError(
                     "El precio de venta por caja no puede ser negativo."
                 )
-
 
             # ==========================================
             # IMAGEN
@@ -655,7 +607,6 @@ def editar(id):
             archivo_imagen = request.files.get(
                 "imagen"
             )
-
 
             if archivo_imagen and archivo_imagen.filename:
 
@@ -666,16 +617,13 @@ def editar(id):
                     "image/gif"
                 }
 
-
                 if archivo_imagen.mimetype not in tipos_permitidos:
 
                     raise ValueError(
                         "La imagen debe ser JPG, PNG, WEBP o GIF."
                     )
 
-
                 imagen_bytes = archivo_imagen.read()
-
 
                 if not imagen_bytes:
 
@@ -683,13 +631,11 @@ def editar(id):
                         "No se pudo leer la imagen seleccionada."
                     )
 
-
                 if len(imagen_bytes) > 5 * 1024 * 1024:
 
                     raise ValueError(
                         "La imagen no puede superar los 5 MB."
                     )
-
 
                 producto.imagen = imagen_bytes
 
@@ -697,9 +643,8 @@ def editar(id):
                     archivo_imagen.mimetype
                 )
 
-
             # ==========================================
-            # ACTUALIZAR PRODUCTO
+            # ACTUALIZAR INFORMACIÓN
             # ==========================================
 
             producto.nombre = nombre
@@ -714,6 +659,9 @@ def editar(id):
                 categoria or None
             )
 
+            # ==========================================
+            # ACTUALIZAR PRECIOS
+            # ==========================================
 
             producto.precio_compra = (
                 precio_compra
@@ -723,7 +671,6 @@ def editar(id):
                 precio_venta
             )
 
-
             producto.precio_compra_caja = (
                 precio_compra_caja
             )
@@ -732,6 +679,9 @@ def editar(id):
                 precio_venta_caja
             )
 
+            # ==========================================
+            # ACTUALIZAR INVENTARIO
+            # ==========================================
 
             producto.stock = stock
 
@@ -739,6 +689,9 @@ def editar(id):
                 stock_minimo
             )
 
+            # ==========================================
+            # ACTUALIZAR CONFIGURACIÓN DE CAJAS
+            # ==========================================
 
             producto.unidades_por_caja = (
                 unidades_por_caja
@@ -748,31 +701,29 @@ def editar(id):
                 maneja_cajas
             )
 
+            # ==========================================
+            # GUARDAR
+            # ==========================================
 
             db.session.commit()
-
 
             flash(
                 "Producto actualizado correctamente.",
                 "success"
             )
 
-
             return redirect(
                 url_for("productos.index")
             )
-
 
         except (ValueError, TypeError) as error:
 
             db.session.rollback()
 
-
             flash(
                 str(error),
                 "danger"
             )
-
 
     return render_template(
         "productos/editar.html",
@@ -798,7 +749,6 @@ def eliminar(id):
         )
     ).scalar_one_or_none()
 
-
     if producto is None:
 
         flash(
@@ -810,18 +760,14 @@ def eliminar(id):
             url_for("productos.index")
         )
 
-
     producto.activo = False
 
-
     db.session.commit()
-
 
     flash(
         "Producto desactivado correctamente.",
         "success"
     )
-
 
     return redirect(
         url_for("productos.index")
