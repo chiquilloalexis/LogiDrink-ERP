@@ -42,10 +42,6 @@ Editar rol
 >
 
 
-    <!-- ======================================================
-         INFORMACIÓN DEL ROL
-    ======================================================= -->
-
     <div class="form-group">
 
         <label>
@@ -78,11 +74,36 @@ Editar rol
     </div>
 
 
-    <!-- ======================================================
-         PERMISOS
-    ======================================================= -->
+    <div
+        style="
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            margin:25px 0 15px;
+        "
+    >
 
-    <h2 style="margin:30px 0 15px;">
+        <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="seleccionarTodos()"
+        >
+            Seleccionar todo
+        </button>
+
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="limpiarTodos()"
+        >
+            Limpiar todo
+        </button>
+
+    </div>
+
+
+    <h2 style="margin:20px 0 15px;">
         Permisos del rol
     </h2>
 
@@ -131,7 +152,9 @@ Editar rol
 
                     {% for modulo in modulos %}
 
-                        {% set permiso = permisos.get(modulo.nombre.strip().lower()) %}
+                        {% set permiso = permisos.get(
+                            modulo.nombre.strip().lower()
+                        ) %}
 
 
                         <tr>
@@ -152,9 +175,7 @@ Editar rol
                                             margin-top:3px;
                                         "
                                     >
-
                                         {{ modulo.descripcion }}
-
                                     </div>
 
                                 {% endif %}
@@ -162,12 +183,11 @@ Editar rol
                             </td>
 
 
-                            <!-- VER -->
-
                             <td>
 
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="ver_{{ modulo.id }}"
                                     {% if permiso and permiso.ver %}
                                         checked
@@ -177,12 +197,11 @@ Editar rol
                             </td>
 
 
-                            <!-- CREAR -->
-
                             <td>
 
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="crear_{{ modulo.id }}"
                                     {% if permiso and permiso.crear %}
                                         checked
@@ -192,12 +211,11 @@ Editar rol
                             </td>
 
 
-                            <!-- EDITAR -->
-
                             <td>
 
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="editar_{{ modulo.id }}"
                                     {% if permiso and permiso.editar %}
                                         checked
@@ -207,12 +225,11 @@ Editar rol
                             </td>
 
 
-                            <!-- ELIMINAR -->
-
                             <td>
 
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="eliminar_{{ modulo.id }}"
                                     {% if permiso and permiso.eliminar %}
                                         checked
@@ -222,12 +239,11 @@ Editar rol
                             </td>
 
 
-                            <!-- REPORTES -->
-
                             <td>
 
                                 <input
                                     type="checkbox"
+                                    class="permiso-checkbox"
                                     name="reportes_{{ modulo.id }}"
                                     {% if permiso and permiso.reportes %}
                                         checked
@@ -269,10 +285,6 @@ Editar rol
     {% endif %}
 
 
-    <!-- ======================================================
-         BOTONES
-    ======================================================= -->
-
     <div
         class="actions"
         style="margin-top:25px;"
@@ -282,9 +294,7 @@ Editar rol
             type="submit"
             class="btn btn-primary"
         >
-
             Guardar cambios
-
         </button>
 
 
@@ -292,15 +302,43 @@ Editar rol
             href="{{ url_for('roles.index') }}"
             class="btn btn-secondary"
         >
-
             Cancelar
-
         </a>
 
     </div>
 
 
 </form>
+
+
+<script>
+
+function seleccionarTodos() {
+
+    document
+        .querySelectorAll(".permiso-checkbox")
+        .forEach(function(checkbox) {
+
+            checkbox.checked = true;
+
+        });
+
+}
+
+
+function limpiarTodos() {
+
+    document
+        .querySelectorAll(".permiso-checkbox")
+        .forEach(function(checkbox) {
+
+            checkbox.checked = false;
+
+        });
+
+}
+
+</script>
 
 
 {% endblock %}
