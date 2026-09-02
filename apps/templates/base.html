@@ -1681,37 +1681,39 @@
 
 
 <script>
+if ("serviceWorker" in navigator) {
 
-    if ('serviceWorker' in navigator) {
+    window.addEventListener("load", function () {
 
-        window.addEventListener(
-            'load',
-            () => {
-
-                navigator.serviceWorker.register(
-                    "{{ url_for('static', filename='sw.js') }}"
-                )
-
-                .then(
-                    () => console.log(
-                        'Service Worker registrado'
-                    )
-                )
-
-                .catch(
-                    err => console.error(
-                        'Error SW:',
-                        err
-                    )
-                );
-
+        navigator.serviceWorker.register(
+            "{{ url_for('static', filename='sw.js') }}",
+            {
+                scope: "/"
             }
-        );
+        )
+        .then(function (registration) {
 
-    }
+            console.log(
+                "LogiDrink PWA: Service Worker registrado",
+                registration.scope
+            );
 
+            registration.update();
+
+        })
+        .catch(function (error) {
+
+            console.error(
+                "LogiDrink PWA: Error registrando Service Worker:",
+                error
+            );
+
+        });
+
+    });
+
+}
 </script>
-
 
 </body>
 
