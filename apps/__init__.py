@@ -177,6 +177,14 @@ def create_app():
 
     @app.route("/")
     def inicio():
-        return "LogiDrink ERP funcionando correctamente"
+
+    if not current_user.is_authenticated:
+        return redirect(
+            url_for("auth.login")
+        )
+
+    return redirect(
+        url_for("dashboard.index")
+    )
 
     return app
