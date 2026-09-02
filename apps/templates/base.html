@@ -123,7 +123,9 @@
 
             margin-bottom: 4px;
 
-            transition: background .2s, color .2s;
+            transition:
+                background .2s,
+                color .2s;
         }
 
 
@@ -905,6 +907,22 @@
                     >
 
                         Usuarios
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- ROLES Y PERMISOS -->
+
+                {% if current_user.es_admin_empresa()
+                      and current_user.tiene_permiso("roles y permisos", "ver") %}
+
+                    <a
+                        href="{{ url_for('roles.index') }}"
+                    >
+
+                        Roles y permisos
 
                     </a>
 
