@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, current_user
@@ -178,13 +178,21 @@ def create_app():
     @app.route("/")
     def inicio():
 
-    if not current_user.is_authenticated:
-        return redirect(
-            url_for("auth.login")
-        )
+        # ------------------------------------------------------
+        # USUARIO NO AUTENTICADO
+        # ------------------------------------------------------
 
-    return redirect(
-        url_for("dashboard.index")
-    )
+        if not current_user.is_authenticated:
+            return redirect(
+                url_for("auth.login")
+            )
+
+        # ------------------------------------------------------
+        # USUARIO AUTENTICADO
+        # ------------------------------------------------------
+
+        return redirect(
+            url_for("dashboard.index")
+        )
 
     return app
