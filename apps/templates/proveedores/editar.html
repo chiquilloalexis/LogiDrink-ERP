@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}
+Editar proveedor | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Editar proveedor
+{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 800px; margin: 0 auto;">
+
+    <div style="
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 25px;
+    ">
+
+        <h2 style="margin-top:0;">
+            Editar proveedor
+        </h2>
+
+        <p style="color:#6b7280;">
+            Actualiza la información de {{ proveedor.nombre }}.
+        </p>
+
+
+        <form method="POST">
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(2, 1fr);
+                gap:18px;
+            ">
+
+
+                <div>
+
+                    <label>
+                        Nombre *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nombre"
+                        value="{{ proveedor.nombre }}"
+                        required
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:6px;
+                        "
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        NIT
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nit"
+                        value="{{ proveedor.nit or '' }}"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:6px;
+                        "
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Teléfono
+                    </label>
+
+                    <input
+                        type="text"
+                        name="telefono"
+                        value="{{ proveedor.telefono or '' }}"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:6px;
+                        "
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Correo
+                    </label>
+
+                    <input
+                        type="email"
+                        name="correo"
+                        value="{{ proveedor.correo or '' }}"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:6px;
+                        "
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Persona de contacto
+                    </label>
+
+                    <input
+                        type="text"
+                        name="contacto"
+                        value="{{ proveedor.contacto or '' }}"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:6px;
+                        "
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Dirección
+                    </label>
+
+                    <input
+                        type="text"
+                        name="direccion"
+                        value="{{ proveedor.direccion or '' }}"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:6px;
+                        "
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div style="
+                display:flex;
+                gap:10px;
+                margin-top:25px;
+            ">
+
+
+                <button
+                    type="submit"
+                    style="
+                        background:#22c55e;
+                        color:white;
+                        border:none;
+                        padding:11px 18px;
+                        border-radius:8px;
+                        font-weight:600;
+                        cursor:pointer;
+                    "
+                >
+                    Guardar cambios
+                </button>
+
+
+                <a
+                    href="{{ url_for('proveedores.index') }}"
+                    style="
+                        background:#f3f4f6;
+                        color:#374151;
+                        padding:11px 18px;
+                        border-radius:8px;
+                        text-decoration:none;
+                        font-weight:600;
+                    "
+                >
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

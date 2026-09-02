@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}
+Editar Empresa | Superadministrador
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold">
+            Editar empresa
+        </h1>
+
+        <p class="text-muted">
+            Modifica la información de {{ empresa.nombre }}.
+        </p>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Nombre de la empresa *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="nombre"
+                            class="form-control"
+                            value="{{ empresa.nombre }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            NIT *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="nit"
+                            class="form-control"
+                            value="{{ empresa.nit }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Dirección
+                        </label>
+
+                        <input
+                            type="text"
+                            name="direccion"
+                            class="form-control"
+                            value="{{ empresa.direccion or '' }}"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Teléfono
+                        </label>
+
+                        <input
+                            type="text"
+                            name="telefono"
+                            class="form-control"
+                            value="{{ empresa.telefono or '' }}"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            value="{{ empresa.email or '' }}"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="mt-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Guardar cambios
+                    </button>
+
+                    <a
+                        href="{{ url_for('superadmin.empresas') }}"
+                        class="btn btn-secondary"
+                    >
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

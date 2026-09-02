@@ -1,0 +1,978 @@
+{% extends "base.html" %}
+
+{% block title %}
+Inventario | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Inventario
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    /* ==========================================================
+       CONTENEDOR PRINCIPAL
+    ========================================================== */
+
+    .inventory-page {
+        width: 100%;
+    }
+
+
+    /* ==========================================================
+       ENCABEZADO
+    ========================================================== */
+
+    .inventory-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .inventory-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .inventory-description {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .inventory-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+
+    /* ==========================================================
+       BOTONES
+    ========================================================== */
+
+    .inventory-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 10px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all .15s ease;
+        white-space: nowrap;
+    }
+
+    .inventory-btn-primary {
+        background: #22c55e;
+        color: white;
+    }
+
+    .inventory-btn-primary:hover {
+        background: #16a34a;
+    }
+
+    .inventory-btn-entry {
+        background: #ecfdf5;
+        color: #15803d;
+        border-color: #bbf7d0;
+    }
+
+    .inventory-btn-entry:hover {
+        background: #dcfce7;
+    }
+
+    .inventory-btn-exit {
+        background: #fef2f2;
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+
+    .inventory-btn-exit:hover {
+        background: #fee2e2;
+    }
+
+    .inventory-btn-history {
+        background: #f3f4f6;
+        color: #374151;
+        border-color: #e5e7eb;
+    }
+
+    .inventory-btn-history:hover {
+        background: #e5e7eb;
+    }
+
+
+    /* ==========================================================
+       ESTADÍSTICAS
+    ========================================================== */
+
+    .inventory-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .inventory-stat {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .inventory-stat-label {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .inventory-stat-value {
+        color: #111827;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .inventory-stat-description {
+        margin-top: 5px;
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .stat-indicator {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: #22c55e;
+    }
+
+    .stat-indicator-warning {
+        background: #f59e0b;
+    }
+
+    .stat-indicator-blue {
+        background: #3b82f6;
+    }
+
+
+    /* ==========================================================
+       TARJETA PRINCIPAL
+    ========================================================== */
+
+    .inventory-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .inventory-card-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .inventory-card-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .inventory-card-subtitle {
+        margin-top: 3px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    .product-count {
+        font-size: 13px;
+        color: #6b7280;
+        white-space: nowrap;
+    }
+
+
+    /* ==========================================================
+       TABLA
+    ========================================================== */
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .inventory-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+    .inventory-table th {
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        text-align: left;
+        padding: 13px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    .inventory-table td {
+        padding: 16px;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 14px;
+        color: #374151;
+        vertical-align: middle;
+    }
+
+    .inventory-table tbody tr:hover {
+        background: #fafafa;
+    }
+
+    .inventory-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* ==========================================================
+       PRODUCTO
+    ========================================================== */
+
+    .product-name {
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 4px;
+    }
+
+    .product-code {
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+
+    /* ==========================================================
+       STOCK
+    ========================================================== */
+
+    .stock-main {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .stock-secondary {
+        margin-top: 3px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .stock-normal {
+        color: #15803d;
+    }
+
+    .stock-low {
+        color: #d97706;
+    }
+
+    .stock-empty {
+        color: #dc2626;
+    }
+
+
+    /* ==========================================================
+       PRESENTACIÓN
+    ========================================================== */
+
+    .presentation-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .badge {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        padding: 5px 9px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .badge-box {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .badge-unit {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .presentation-detail {
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+
+    /* ==========================================================
+       ESTADO
+    ========================================================== */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-available {
+        background: #ecfdf5;
+        color: #15803d;
+    }
+
+    .status-low {
+        background: #fffbeb;
+        color: #b45309;
+    }
+
+    .status-empty {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+
+    /* ==========================================================
+       ACCIONES
+    ========================================================== */
+
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+    }
+
+    .action-edit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 11px;
+        border-radius: 7px;
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #dbeafe;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        transition: all .15s ease;
+    }
+
+    .action-edit:hover {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+
+    /* ==========================================================
+       ESTADO VACÍO
+    ========================================================== */
+
+    .empty-state {
+        padding: 65px 25px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+    }
+
+    .empty-state h3 {
+        color: #111827;
+        font-size: 17px;
+        margin-bottom: 7px;
+    }
+
+    .empty-state p {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+
+    /* ==========================================================
+       RESPONSIVE
+    ========================================================== */
+
+    @media (max-width: 1000px) {
+
+        .inventory-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+
+    @media (max-width: 750px) {
+
+        .inventory-header {
+            flex-direction: column;
+        }
+
+        .inventory-actions {
+            width: 100%;
+        }
+
+        .inventory-btn {
+            flex: 1;
+        }
+
+    }
+
+
+    @media (max-width: 550px) {
+
+        .inventory-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .inventory-actions {
+            flex-direction: column;
+        }
+
+        .inventory-btn {
+            width: 100%;
+        }
+
+        .inventory-title {
+            font-size: 22px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="inventory-page">
+
+
+    <!-- ======================================================
+         ENCABEZADO
+    ======================================================= -->
+
+    <div class="inventory-header">
+
+        <div>
+
+            <div class="inventory-title">
+                Control de inventario
+            </div>
+
+            <div class="inventory-description">
+                Consulta y controla las existencias de tus productos.
+            </div>
+
+        </div>
+
+
+        <div class="inventory-actions">
+
+            <a
+                href="{{ url_for('inventario.entrada') }}"
+                class="inventory-btn inventory-btn-entry"
+            >
+                + Entrada
+            </a>
+
+            <a
+                href="{{ url_for('inventario.salida') }}"
+                class="inventory-btn inventory-btn-exit"
+            >
+                − Salida
+            </a>
+
+            <a
+                href="{{ url_for('inventario.movimientos') }}"
+                class="inventory-btn inventory-btn-history"
+            >
+                Movimientos
+            </a>
+
+            <a
+                href="{{ url_for('productos.nuevo') }}"
+                class="inventory-btn inventory-btn-primary"
+            >
+                + Nuevo producto
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         ESTADÍSTICAS
+    ======================================================= -->
+
+    <div class="inventory-stats">
+
+
+        <!-- PRODUCTOS -->
+
+        <div class="inventory-stat">
+
+            <div class="stat-indicator"></div>
+
+            <div class="inventory-stat-label">
+                Productos
+            </div>
+
+            <div class="inventory-stat-value">
+                {{ total_productos }}
+            </div>
+
+            <div class="inventory-stat-description">
+                Productos activos
+            </div>
+
+        </div>
+
+
+        <!-- UNIDADES -->
+
+        <div class="inventory-stat">
+
+            <div class="stat-indicator stat-indicator-blue"></div>
+
+            <div class="inventory-stat-label">
+                Unidades
+            </div>
+
+            <div class="inventory-stat-value">
+                {{ "{:,.0f}".format(total_unidades|float) }}
+            </div>
+
+            <div class="inventory-stat-description">
+                Existencias actuales
+            </div>
+
+        </div>
+
+
+        <!-- CAJAS -->
+
+        <div class="inventory-stat">
+
+            <div class="stat-indicator stat-indicator-blue"></div>
+
+            <div class="inventory-stat-label">
+                Con cajas
+            </div>
+
+            <div class="inventory-stat-value">
+                {{ productos_con_cajas }}
+            </div>
+
+            <div class="inventory-stat-description">
+                Productos por caja
+            </div>
+
+        </div>
+
+
+        <!-- STOCK BAJO -->
+
+        <div class="inventory-stat">
+
+            <div class="stat-indicator stat-indicator-warning"></div>
+
+            <div class="inventory-stat-label">
+                Stock bajo
+            </div>
+
+            <div class="inventory-stat-value">
+                {{ productos_stock_bajo }}
+            </div>
+
+            <div class="inventory-stat-description">
+                Requieren reposición
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         EXISTENCIAS
+    ======================================================= -->
+
+    <div class="inventory-card">
+
+
+        <div class="inventory-card-header">
+
+            <div>
+
+                <div class="inventory-card-title">
+                    Existencias
+                </div>
+
+                <div class="inventory-card-subtitle">
+                    Stock actual de los productos de tu empresa
+                </div>
+
+            </div>
+
+            <div class="product-count">
+                {{ total_productos }} productos
+            </div>
+
+        </div>
+
+
+        {% if productos %}
+
+        <div class="table-container">
+
+            <table class="inventory-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Producto
+                        </th>
+
+                        <th>
+                            Código
+                        </th>
+
+                        <th>
+                            Stock
+                        </th>
+
+                        <th>
+                            Presentación
+                        </th>
+
+                        <th>
+                            Mínimo
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for producto in productos %}
+
+                    <tr>
+
+
+                        <!-- ==================================================
+                             PRODUCTO
+                        =================================================== -->
+
+                        <td>
+
+                            <div class="product-name">
+                                {{ producto.nombre }}
+                            </div>
+
+                            {% if producto.categoria %}
+
+                            <div class="product-code">
+                                {{ producto.categoria }}
+                            </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ==================================================
+                             CÓDIGO
+                        =================================================== -->
+
+                        <td>
+
+                            <span class="product-code">
+
+                                {{ producto.codigo or "Sin código" }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- ==================================================
+                             STOCK
+                        =================================================== -->
+
+                        <td>
+
+                            {% set stock = producto.stock or 0 %}
+                            {% set minimo = producto.stock_minimo or 0 %}
+
+                            {% if stock <= 0 %}
+
+                                <div class="stock-main stock-empty">
+                                    0 unidades
+                                </div>
+
+                            {% elif stock <= minimo %}
+
+                                <div class="stock-main stock-low">
+                                    {{ "{:,.0f}".format(stock|float) }}
+                                    unidades
+                                </div>
+
+                            {% else %}
+
+                                <div class="stock-main stock-normal">
+                                    {{ "{:,.0f}".format(stock|float) }}
+                                    unidades
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if producto.maneja_cajas and producto.unidades_por_caja %}
+
+                                {% set cajas = stock // producto.unidades_por_caja %}
+                                {% set unidades_sueltas = stock % producto.unidades_por_caja %}
+
+                                <div class="stock-secondary">
+
+                                    {{ cajas }} caja{% if cajas != 1 %}s{% endif %}
+
+                                    {% if unidades_sueltas > 0 %}
+                                        + {{ unidades_sueltas }} unidad{% if unidades_sueltas != 1 %}es{% endif %}
+                                    {% endif %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ==================================================
+                             PRESENTACIÓN
+                        =================================================== -->
+
+                        <td>
+
+                            <div class="presentation-container">
+
+                                {% if producto.maneja_cajas %}
+
+                                    <span class="badge badge-box">
+
+                                        Caja ×
+                                        {{ producto.unidades_por_caja }}
+
+                                    </span>
+
+                                    <span class="presentation-detail">
+                                        {{ producto.unidades_por_caja }}
+                                        unidades por caja
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-unit">
+                                        Unidad
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- ==================================================
+                             STOCK MÍNIMO
+                        =================================================== -->
+
+                        <td>
+
+                            <strong>
+                                {{ minimo }}
+                            </strong>
+
+                            <div class="stock-secondary">
+                                unidades
+                            </div>
+
+                        </td>
+
+
+                        <!-- ==================================================
+                             ESTADO
+                        =================================================== -->
+
+                        <td>
+
+                            {% if stock <= 0 %}
+
+                                <span class="status-badge status-empty">
+
+                                    <span class="status-dot"></span>
+
+                                    Agotado
+
+                                </span>
+
+                            {% elif stock <= minimo %}
+
+                                <span class="status-badge status-low">
+
+                                    <span class="status-dot"></span>
+
+                                    Stock bajo
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge status-available">
+
+                                    <span class="status-dot"></span>
+
+                                    Disponible
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ==================================================
+                             ACCIONES
+                        =================================================== -->
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <a
+                                    href="{{ url_for(
+                                        'productos.editar',
+                                        id=producto.id
+                                    ) }}"
+                                    class="action-edit"
+                                >
+                                    Editar
+                                </a>
+
+                            </div>
+
+                        </td>
+
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- ==================================================
+             SIN PRODUCTOS
+        =================================================== -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                📦
+            </div>
+
+            <h3>
+                No hay productos en el inventario
+            </h3>
+
+            <p>
+                Crea tu primer producto para comenzar a controlar
+                las existencias.
+            </p>
+
+            <a
+                href="{{ url_for('productos.nuevo') }}"
+                class="inventory-btn inventory-btn-primary"
+            >
+                + Crear producto
+            </a>
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+{% endblock %}

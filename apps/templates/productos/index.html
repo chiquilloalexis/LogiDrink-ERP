@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block title %}
+Productos | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Productos
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-description {
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .btn-primary {
+        background: #22c55e;
+        color: white;
+        text-decoration: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .btn-primary:hover {
+        background: #16a34a;
+    }
+
+    .search-box {
+        background: white;
+        padding: 18px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 11px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: #22c55e;
+    }
+
+    .btn-search {
+        border: none;
+        background: #111827;
+        color: white;
+        padding: 11px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .table-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        text-align: left;
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 14px;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .product-code {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    .stock {
+        font-weight: 600;
+    }
+
+    .stock-low {
+        color: #dc2626;
+    }
+
+    .stock-ok {
+        color: #16a34a;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-inactive {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-edit {
+        background: #eff6ff;
+        color: #2563eb;
+        text-decoration: none;
+        padding: 7px 11px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .btn-delete {
+        background: #fef2f2;
+        color: #dc2626;
+        border: none;
+        padding: 7px 11px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 50px 20px;
+        color: #6b7280;
+    }
+
+    .empty-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .flash {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .flash-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .flash-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    @media (max-width: 700px) {
+        .page-header {
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .search-form {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Productos</h1>
+        <p class="page-description">
+            Administra los productos e inventario de tu empresa
+        </p>
+    </div>
+
+    <a href="{{ url_for('productos.nuevo') }}" class="btn-primary">
+        + Nuevo producto
+    </a>
+</div>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
+<div class="search-box">
+
+    <form method="GET"
+          action="{{ url_for('productos.index') }}"
+          class="search-form">
+
+        <input
+            type="text"
+            name="buscar"
+            class="search-input"
+            placeholder="Buscar por nombre, código o categoría..."
+            value="{{ busqueda }}"
+        >
+
+        <button type="submit" class="btn-search">
+            Buscar
+        </button>
+
+    </form>
+
+</div>
+
+
+<div class="table-card">
+
+    {% if productos %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Precio compra</th>
+                        <th>Precio venta</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for producto in productos %}
+
+                        <tr>
+
+                            <td>
+                                <div class="product-name">
+                                    {{ producto.nombre }}
+                                </div>
+
+                                <div class="product-code">
+                                    Código: {{ producto.codigo }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ producto.categoria or "Sin categoría" }}
+                            </td>
+
+                            <td>
+                                ${{ "{:,.0f}".format(producto.precio_compra or 0) }}
+                            </td>
+
+                            <td>
+                                ${{ "{:,.0f}".format(producto.precio_venta or 0) }}
+                            </td>
+
+                            <td>
+
+                                {% if producto.stock <= producto.stock_minimo %}
+                                    <span class="stock stock-low">
+                                        {{ producto.stock }}
+                                    </span>
+                                {% else %}
+                                    <span class="stock stock-ok">
+                                        {{ producto.stock }}
+                                    </span>
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if producto.activo %}
+                                    <span class="badge badge-active">
+                                        Activo
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-inactive">
+                                        Inactivo
+                                    </span>
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <div class="actions">
+
+                                    <a
+                                        href="{{ url_for('productos.editar', id=producto.id) }}"
+                                        class="btn-edit"
+                                    >
+                                        Editar
+                                    </a>
+
+                                    {% if producto.activo %}
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for('productos.eliminar', id=producto.id) }}"
+                                            onsubmit="return confirm('¿Deseas desactivar este producto?');"
+                                        >
+                                            <button
+                                                type="submit"
+                                                class="btn-delete"
+                                            >
+                                                Desactivar
+                                            </button>
+                                        </form>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+
+            <div class="empty-title">
+                No hay productos
+            </div>
+
+            <p>
+                Todavía no tienes productos registrados.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

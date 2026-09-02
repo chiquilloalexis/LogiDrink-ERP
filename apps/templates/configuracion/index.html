@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}
+Configuración | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Configuración
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Configuración
+        </h1>
+
+        <p style="color:#6b7280; margin-top:6px;">
+            Configura tu perfil y la información de tu empresa.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     PERFIL DEL USUARIO
+======================================================= -->
+
+<div
+    style="
+        background:white;
+        border:1px solid #e5e7eb;
+        border-radius:12px;
+        padding:25px;
+        margin-bottom:25px;
+        max-width:700px;
+    "
+>
+
+    <h2
+        style="
+            font-size:20px;
+            margin-bottom:20px;
+        "
+    >
+        Mi perfil
+    </h2>
+
+
+    <div
+        style="
+            display:flex;
+            align-items:center;
+            gap:25px;
+            flex-wrap:wrap;
+        "
+    >
+
+        <!-- AVATAR -->
+
+        <div>
+
+            {% if usuario.foto_perfil %}
+
+                <img
+                    src="{{ url_for(
+                        'configuracion.foto',
+                        id=usuario.id
+                    ) }}?v={{ usuario.id }}"
+                    alt="Foto de perfil"
+                    style="
+                        width:110px;
+                        height:110px;
+                        border-radius:50%;
+                        object-fit:cover;
+                        border:4px solid #22c55e;
+                        display:block;
+                    "
+                >
+
+            {% else %}
+
+                <div
+                    style="
+                        width:110px;
+                        height:110px;
+                        border-radius:50%;
+                        background:#22c55e;
+                        color:white;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        font-size:42px;
+                        font-weight:bold;
+                        text-transform:uppercase;
+                    "
+                >
+
+                    {{ usuario.nombre[0]|upper }}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- INFORMACION -->
+
+        <div>
+
+            <div
+                style="
+                    font-size:20px;
+                    font-weight:600;
+                    margin-bottom:6px;
+                "
+            >
+
+                {{ usuario.nombre }}
+
+            </div>
+
+
+            <div
+                style="
+                    color:#6b7280;
+                    margin-bottom:5px;
+                "
+            >
+
+                {{ usuario.email }}
+
+            </div>
+
+
+            <div
+                style="
+                    color:#9ca3af;
+                    font-size:13px;
+                "
+            >
+
+                {% if usuario.es_superadmin %}
+
+                    Superadministrador
+
+                {% elif usuario.rol_objeto %}
+
+                    {{ usuario.rol_objeto.nombre }}
+
+                {% else %}
+
+                    Usuario
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         SUBIR FOTO
+    =================================================== -->
+
+    <form
+        method="POST"
+        action="{{ url_for('configuracion.guardar_foto') }}"
+        enctype="multipart/form-data"
+        style="margin-top:25px;"
+    >
+
+        <div class="form-group">
+
+            <label>
+                Foto de perfil
+            </label>
+
+            <input
+                type="file"
+                name="foto_perfil"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                required
+            >
+
+            <small
+                style="
+                    display:block;
+                    margin-top:7px;
+                    color:#6b7280;
+                "
+            >
+                JPG, PNG, WEBP o GIF. Máximo 5 MB.
+            </small>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Guardar foto
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- ======================================================
+     CONFIGURACION DE EMPRESA
+======================================================= -->
+
+{% if empresa %}
+
+<div class="form-container">
+
+    <h2
+        style="
+            font-size:20px;
+            margin-bottom:20px;
+        "
+    >
+        Información de la empresa
+    </h2>
+
+
+    <form
+        method="POST"
+        action="{{ url_for('configuracion.guardar') }}"
+    >
+
+        <div class="form-group">
+
+            <label>
+                Nombre de la empresa
+            </label>
+
+            <input
+                type="text"
+                name="nombre"
+                value="{{ empresa.nombre or '' }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                NIT
+            </label>
+
+            <input
+                type="text"
+                name="nit"
+                value="{{ empresa.nit or '' }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Dirección
+            </label>
+
+            <input
+                type="text"
+                name="direccion"
+                value="{{ empresa.direccion or '' }}"
+                placeholder="Dirección de la empresa"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Teléfono
+            </label>
+
+            <input
+                type="text"
+                name="telefono"
+                value="{{ empresa.telefono or '' }}"
+                placeholder="Teléfono"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Correo electrónico
+            </label>
+
+            <input
+                type="email"
+                name="email"
+                value="{{ empresa.email or '' }}"
+                placeholder="correo@empresa.com"
+            >
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Guardar configuración
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% else %}
+
+<div
+    style="
+        background:white;
+        border:1px solid #e5e7eb;
+        border-radius:12px;
+        padding:20px;
+        max-width:700px;
+        color:#6b7280;
+    "
+>
+
+    Tu cuenta de Superadministrador no está asociada
+    a una empresa.
+
+</div>
+
+{% endif %}
+
+{% endblock %}

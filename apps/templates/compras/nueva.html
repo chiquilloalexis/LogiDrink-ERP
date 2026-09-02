@@ -1,0 +1,588 @@
+{% extends "base.html" %}
+
+{% block title %}
+Nueva compra | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Nueva compra
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .header {
+        margin-bottom: 25px;
+    }
+
+    .descripcion {
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .card h3 {
+        margin-top: 0;
+        margin-bottom: 18px;
+        color: #111827;
+    }
+
+    label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        padding: 10px 12px;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    .productos-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .productos-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tabla-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #f9fafb;
+        padding: 12px;
+        text-align: left;
+        font-size: 12px;
+        color: #6b7280;
+        text-transform: uppercase;
+    }
+
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    td input,
+    td select {
+        margin: 0;
+    }
+
+    .btn-add {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 9px 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-remove {
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .total-card {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 25px;
+        padding: 20px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .total-label {
+        font-size: 16px;
+        font-weight: 600;
+        color: #6b7280;
+    }
+
+    .total-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .acciones {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-cancelar {
+        background: #f3f4f6;
+        color: #374151;
+        text-decoration: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .btn-guardar {
+        background: #22c55e;
+        color: white;
+        border: none;
+        padding: 11px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    @media (max-width: 800px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .total-card {
+            justify-content: space-between;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="header">
+
+```
+<h2>Registrar nueva compra</h2>
+
+<div class="descripcion">
+    Registra la mercancía recibida y actualiza automáticamente el inventario.
+</div>
+```
+
+</div>
+
+<form method="POST">
+
+```
+<div class="grid">
+
+    <div class="card">
+
+        <h3>Información de la compra</h3>
+
+        <label>
+            Proveedor
+        </label>
+
+        <select name="proveedor_id" required>
+
+            <option value="">
+                Seleccionar proveedor
+            </option>
+
+            {% for proveedor in proveedores %}
+
+            <option value="{{ proveedor.id }}">
+                {{ proveedor.nombre }}
+                {% if proveedor.nit %}
+                    - {{ proveedor.nit }}
+                {% endif %}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <label>
+            Número de compra / factura
+        </label>
+
+        <input
+            type="text"
+            name="numero"
+            placeholder="Ej: FAC-00125"
+            required
+        >
+
+    </div>
+
+    <div class="card">
+
+        <h3>Observaciones</h3>
+
+        <textarea
+            name="observaciones"
+            placeholder="Observaciones de la compra..."
+        ></textarea>
+
+    </div>
+
+</div>
+
+<div class="productos-card">
+
+    <div class="productos-header">
+
+        <strong>
+            Productos recibidos
+        </strong>
+
+        <button
+            type="button"
+            class="btn-add"
+            onclick="agregarProducto()"
+        >
+            + Agregar producto
+        </button>
+
+    </div>
+
+    <div class="tabla-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Producto</th>
+                    <th>Tipo</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+
+            <tbody id="productos-body">
+
+                <tr class="producto-row">
+
+                    <td>
+
+                        <select
+                            name="producto_id[]"
+                            onchange="actualizarTipo(this)"
+                            required
+                        >
+
+                            <option value="">
+                                Seleccionar
+                            </option>
+
+                            {% for producto in productos %}
+
+                            <option
+                                value="{{ producto.id }}"
+                                data-cajas="{{ '1' if producto.maneja_cajas else '0' }}"
+                                data-unidades="{{ producto.unidades_por_caja }}"
+                            >
+                                {{ producto.nombre }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </td>
+
+                    <td>
+
+                        <select
+                            name="tipo_compra[]"
+                            onchange="calcular()"
+                        >
+
+                            <option value="unidad">
+                                Unidad
+                            </option>
+
+                            <option value="caja">
+                                Caja
+                            </option>
+
+                        </select>
+
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            name="cantidad[]"
+                            min="1"
+                            value="1"
+                            onchange="calcular()"
+                            oninput="calcular()"
+                            required
+                        >
+
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            name="precio_unitario[]"
+                            min="0"
+                            step="0.01"
+                            value="0"
+                            onchange="calcular()"
+                            oninput="calcular()"
+                            required
+                        >
+
+                    </td>
+
+                    <td class="subtotal">
+                        $0
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="btn-remove"
+                            onclick="eliminarProducto(this)"
+                        >
+                            ×
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div class="total-card">
+
+    <div class="total-label">
+        Total compra
+    </div>
+
+    <div
+        class="total-value"
+        id="total"
+    >
+        $0
+    </div>
+
+</div>
+
+<div class="acciones">
+
+    <a
+        href="{{ url_for('compras.index') }}"
+        class="btn-cancelar"
+    >
+        Cancelar
+    </a>
+
+    <button
+        type="submit"
+        class="btn-guardar"
+    >
+        Registrar compra
+    </button>
+
+</div>
+```
+
+</form>
+
+<script>
+
+function agregarProducto() {
+
+    const body = document.getElementById("productos-body");
+
+    const primeraFila = body.querySelector(".producto-row");
+
+    const nuevaFila = primeraFila.cloneNode(true);
+
+    nuevaFila.querySelectorAll("input").forEach(function(input) {
+
+        if (input.type === "number") {
+
+            if (input.name === "cantidad[]") {
+                input.value = 1;
+            } else {
+                input.value = 0;
+            }
+
+        }
+
+    });
+
+    nuevaFila.querySelectorAll("select").forEach(function(select) {
+
+        select.selectedIndex = 0;
+
+    });
+
+    nuevaFila.querySelector(".subtotal").textContent = "$0";
+
+    body.appendChild(nuevaFila);
+
+}
+
+
+function eliminarProducto(boton) {
+
+    const body = document.getElementById("productos-body");
+
+    const filas = body.querySelectorAll(".producto-row");
+
+    if (filas.length === 1) {
+
+        alert("Debe existir al menos un producto.");
+
+        return;
+
+    }
+
+    boton.closest("tr").remove();
+
+    calcular();
+
+}
+
+
+function actualizarTipo(selectProducto) {
+
+    const fila = selectProducto.closest("tr");
+
+    const opcion = selectProducto.options[
+        selectProducto.selectedIndex
+    ];
+
+    const tipo = fila.querySelector(
+        'select[name="tipo_compra[]"]'
+    );
+
+    if (opcion.dataset.cajas === "0") {
+
+        tipo.value = "unidad";
+
+        tipo.querySelector(
+            'option[value="caja"]'
+        ).disabled = true;
+
+    } else {
+
+        tipo.querySelector(
+            'option[value="caja"]'
+        ).disabled = false;
+
+    }
+
+    calcular();
+
+}
+
+
+function calcular() {
+
+    const filas = document.querySelectorAll(
+        ".producto-row"
+    );
+
+    let total = 0;
+
+    filas.forEach(function(fila) {
+
+        const cantidad = parseFloat(
+            fila.querySelector(
+                'input[name="cantidad[]"]'
+            ).value
+        ) || 0;
+
+        const precio = parseFloat(
+            fila.querySelector(
+                'input[name="precio_unitario[]"]'
+            ).value
+        ) || 0;
+
+        const subtotal = cantidad * precio;
+
+        fila.querySelector(
+            ".subtotal"
+        ).textContent =
+            "$" + subtotal.toLocaleString(
+                "es-CO",
+                {
+                    maximumFractionDigits: 0
+                }
+            );
+
+        total += subtotal;
+
+    });
+
+    document.getElementById(
+        "total"
+    ).textContent =
+        "$" + total.toLocaleString(
+            "es-CO",
+            {
+                maximumFractionDigits: 0
+            }
+        );
+
+}
+
+calcular();
+
+</script>
+
+{% endblock %}

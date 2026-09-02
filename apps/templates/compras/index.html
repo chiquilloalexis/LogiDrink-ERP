@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}
+Compras | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Compras
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .compras-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .descripcion {
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .btn-primary {
+        background: #22c55e;
+        color: white;
+        text-decoration: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .btn-primary:hover {
+        background: #16a34a;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        text-align: left;
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 14px;
+    }
+
+    .numero {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .proveedor {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .fecha {
+        color: #6b7280;
+    }
+
+    .total {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-completada {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .badge-anulada {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .acciones {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .btn-ver {
+        background: #eff6ff;
+        color: #2563eb;
+        text-decoration: none;
+        padding: 7px 11px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .btn-anular {
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        padding: 7px 11px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6b7280;
+    }
+
+    .empty-state h3 {
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    @media (max-width: 700px) {
+        .compras-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="compras-header">
+    <div>
+        <h2>Compras</h2>
+
+
+    <div class="descripcion">
+        Registra y controla las compras realizadas a tus proveedores.
+    </div>
+</div>
+
+<a href="{{ url_for('compras.nueva') }}" class="btn-primary">
+    + Nueva compra
+</a>
+
+
+</div>
+
+<div class="card">
+
+
+<div class="card-header">
+    <div class="card-title">
+        Historial de compras
+    </div>
+
+    <div>
+        {{ compras|length }} compras
+    </div>
+</div>
+
+{% if compras %}
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Proveedor</th>
+                <th>Fecha</th>
+                <th>Subtotal</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for compra in compras %}
+
+            <tr>
+
+                <td>
+                    <div class="numero">
+                        {{ compra.numero }}
+                    </div>
+                </td>
+
+                <td>
+                    <div class="proveedor">
+                        {{ compra.proveedor.nombre }}
+                    </div>
+                </td>
+
+                <td>
+                    <div class="fecha">
+                        {{ compra.fecha.strftime('%d/%m/%Y %H:%M') }}
+                    </div>
+                </td>
+
+                <td>
+                    ${{ "{:,.0f}".format(compra.subtotal or 0) }}
+                </td>
+
+                <td>
+                    <div class="total">
+                        ${{ "{:,.0f}".format(compra.total or 0) }}
+                    </div>
+                </td>
+
+                <td>
+
+                    {% if compra.estado == "Anulada" %}
+
+                        <span class="badge badge-anulada">
+                            Anulada
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge badge-completada">
+                            {{ compra.estado }}
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <div class="acciones">
+
+                        <a
+                            href="{{ url_for('compras.detalle', id=compra.id) }}"
+                            class="btn-ver"
+                        >
+                            Ver
+                        </a>
+
+                        {% if compra.estado != "Anulada" %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('compras.anular', id=compra.id) }}"
+                            onsubmit="return confirm('¿Seguro que deseas anular esta compra? El inventario será ajustado automáticamente.');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn-anular"
+                            >
+                                Anular
+                            </button>
+
+                        </form>
+
+                        {% endif %}
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% else %}
+
+<div class="empty-state">
+
+    <h3>No hay compras registradas</h3>
+
+    <p>
+        Registra tu primera compra para comenzar a controlar
+        las entradas de mercancía.
+    </p>
+
+    <br>
+
+    <a
+        href="{{ url_for('compras.nueva') }}"
+        class="btn-primary"
+    >
+        Registrar primera compra
+    </a>
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+{% endblock %}

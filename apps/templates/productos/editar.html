@@ -1,0 +1,686 @@
+{% extends "base.html" %}
+
+{% block title %}
+Editar producto | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Editar producto
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-description {
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+        max-width: 900px;
+    }
+
+    .form-section {
+        margin-bottom: 28px;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 7px;
+    }
+
+    input {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        border-color: #22c55e;
+    }
+
+    .help-text {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 5px;
+        line-height: 1.4;
+    }
+
+    /* ==========================================
+       IMAGEN DEL PRODUCTO
+    ========================================== */
+
+    .image-section {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 20px;
+        background: #fafafa;
+    }
+
+    .image-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .image-preview {
+        width: 130px;
+        height: 130px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background: #f3f4f6;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-placeholder {
+        text-align: center;
+        color: #9ca3af;
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .image-info {
+        flex: 1;
+    }
+
+    .image-info label {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .image-input {
+        background: white;
+    }
+
+    .remove-image {
+        margin-top: 10px;
+        display: inline-block;
+        color: #dc2626;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .remove-image:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+        .image-content {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .image-preview {
+            margin: 0 auto;
+        }
+    }
+
+    /* ==========================================
+       ACCIONES
+    ========================================== */
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .btn {
+        padding: 11px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-cancel {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+    }
+
+    .btn-save {
+        background: #22c55e;
+        color: white;
+        border: none;
+    }
+
+    .btn-save:hover {
+        background: #16a34a;
+    }
+
+    /* ==========================================
+       ALERTAS
+    ========================================== */
+
+    .flash {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        max-width: 900px;
+    }
+
+    .flash-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .flash-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    /* ==========================================
+       RESPONSIVE
+    ========================================== */
+
+    @media (max-width: 700px) {
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>Editar producto</h1>
+
+    <p class="page-description">
+        Modifica la información de {{ producto.nombre }}.
+    </p>
+
+</div>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="flash flash-{{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+
+<form
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+    <div class="form-card">
+
+        <!-- ==========================================
+             INFORMACIÓN DEL PRODUCTO
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Información del producto
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="nombre">
+                        Nombre del producto *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        value="{{ producto.nombre }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="codigo">
+                        Código *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="codigo"
+                        name="codigo"
+                        value="{{ producto.codigo }}"
+                        required
+                    >
+
+                    <span class="help-text">
+                        El código debe ser único dentro de tu empresa.
+                    </span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="categoria">
+                        Categoría
+                    </label>
+
+                    <input
+                        type="text"
+                        id="categoria"
+                        name="categoria"
+                        value="{{ producto.categoria or '' }}"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="descripcion">
+                        Descripción
+                    </label>
+
+                    <input
+                        type="text"
+                        id="descripcion"
+                        name="descripcion"
+                        value="{{ producto.descripcion or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             IMAGEN DEL PRODUCTO
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Imagen del producto
+            </div>
+
+            <div class="image-section">
+
+                <div class="image-content">
+
+                    <div class="image-preview">
+
+                        {% if producto.imagen %}
+
+                            <img
+                                id="imagen-preview"
+                                src="{{ url_for('productos.imagen', id=producto.id) }}"
+                                alt="{{ producto.nombre }}"
+                            >
+
+                            <div
+                                id="imagen-placeholder"
+                                class="image-placeholder"
+                                style="display: none;"
+                            >
+                                Sin imagen
+                            </div>
+
+                        {% else %}
+
+                            <img
+                                id="imagen-preview"
+                                src=""
+                                alt="{{ producto.nombre }}"
+                                style="display: none;"
+                            >
+
+                            <div
+                                id="imagen-placeholder"
+                                class="image-placeholder"
+                            >
+                                Sin imagen
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="image-info">
+
+                        <label for="imagen">
+                            Cambiar imagen
+                        </label>
+
+                        <input
+                            type="file"
+                            id="imagen"
+                            name="imagen"
+                            class="image-input"
+                            accept="image/jpeg,image/png,image/webp,image/gif"
+                        >
+
+                        <span class="help-text">
+                            Selecciona una nueva imagen solamente si deseas
+                            cambiar la actual.
+                        </span>
+
+                        <span class="help-text">
+                            Formatos permitidos: JPG, PNG, WEBP o GIF.
+                            Tamaño máximo: 5 MB.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             PRECIOS
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Precios
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="precio_compra">
+                        Precio de compra *
+                    </label>
+
+                    <input
+                        type="number"
+                        id="precio_compra"
+                        name="precio_compra"
+                        min="0"
+                        step="0.01"
+                        value="{{ producto.precio_compra }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="precio_venta">
+                        Precio de venta *
+                    </label>
+
+                    <input
+                        type="number"
+                        id="precio_venta"
+                        name="precio_venta"
+                        min="0"
+                        step="0.01"
+                        value="{{ producto.precio_venta }}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             INVENTARIO
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Inventario
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="stock">
+                        Stock actual *
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock"
+                        name="stock"
+                        min="0"
+                        step="1"
+                        value="{{ producto.stock }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="stock_minimo">
+                        Stock mínimo *
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock_minimo"
+                        name="stock_minimo"
+                        min="0"
+                        step="1"
+                        value="{{ producto.stock_minimo }}"
+                        required
+                    >
+
+                    <span class="help-text">
+                        Cuando el stock llegue a este valor,
+                        aparecerá como stock bajo.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             BOTONES
+        =========================================== -->
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('productos.index') }}"
+                class="btn btn-cancel"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-save"
+            >
+                Guardar cambios
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+<script>
+
+    /* ==========================================
+       VISTA PREVIA DE LA NUEVA IMAGEN
+    ========================================== */
+
+    const imagenInput =
+        document.getElementById("imagen");
+
+    const imagenPreview =
+        document.getElementById("imagen-preview");
+
+    const imagenPlaceholder =
+        document.getElementById("imagen-placeholder");
+
+
+    imagenInput.addEventListener(
+        "change",
+        function () {
+
+            const archivo = this.files[0];
+
+            if (!archivo) {
+                return;
+            }
+
+
+            const tiposPermitidos = [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif"
+            ];
+
+
+            if (!tiposPermitidos.includes(archivo.type)) {
+
+                alert(
+                    "La imagen debe ser JPG, PNG, WEBP o GIF."
+                );
+
+                this.value = "";
+
+                return;
+            }
+
+
+            if (archivo.size > 5 * 1024 * 1024) {
+
+                alert(
+                    "La imagen no puede superar los 5 MB."
+                );
+
+                this.value = "";
+
+                return;
+            }
+
+
+            const lector = new FileReader();
+
+
+            lector.onload = function (evento) {
+
+                imagenPreview.src =
+                    evento.target.result;
+
+                imagenPreview.style.display = "block";
+
+                imagenPlaceholder.style.display = "none";
+
+            };
+
+
+            lector.readAsDataURL(archivo);
+
+        }
+    );
+
+</script>
+
+{% endblock %}

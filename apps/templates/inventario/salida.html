@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}
+Salida de inventario | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Salida de inventario
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-description {
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 25px;
+        max-width: 800px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 7px;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: #22c55e;
+    }
+
+    .help-text {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .btn {
+        border: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #dc2626;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #b91c1c;
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h2>Salida de inventario</h2>
+
+    <div class="page-description">
+        Registra una salida de mercancía del inventario.
+    </div>
+
+</div>
+
+<div class="card">
+
+    <form method="POST">
+
+        <div class="form-group">
+
+            <label class="form-label" for="producto_id">
+                Producto
+            </label>
+
+            <select
+                class="form-control"
+                id="producto_id"
+                name="producto_id"
+                required
+            >
+
+                <option value="">
+                    Selecciona un producto
+                </option>
+
+                {% for producto in productos %}
+
+                    <option value="{{ producto.id }}">
+                        {{ producto.nombre }}
+                        - Stock: {{ producto.stock }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="form-group">
+
+            <label class="form-label" for="cantidad">
+                Cantidad
+            </label>
+
+            <input
+                type="number"
+                class="form-control"
+                id="cantidad"
+                name="cantidad"
+                min="1"
+                step="1"
+                required
+                placeholder="Ej: 5"
+            >
+
+            <div class="help-text">
+                No puedes retirar más unidades de las disponibles.
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label class="form-label" for="observacion">
+                Motivo / observación
+            </label>
+
+            <textarea
+                class="form-control"
+                id="observacion"
+                name="observacion"
+                rows="4"
+                placeholder="Ej: Producto dañado, pérdida, ajuste..."
+            ></textarea>
+
+        </div>
+
+        <div class="actions">
+
+            <a
+                href="{{ url_for('inventario.index') }}"
+                class="btn btn-secondary"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Registrar salida
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %} 

@@ -1,0 +1,833 @@
+{% extends "base.html" %}
+
+{% block title %}
+Reportes | LogiDrink ERP
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ====================================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="h3 mb-1">
+                Reportes
+            </h1>
+
+            <p class="text-muted mb-0">
+                Resumen general de ventas e inventario
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+    <!-- FILTRO DE FECHAS -->
+    <!-- ====================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form
+                method="GET"
+                action="{{ url_for('reportes.index') }}"
+                class="row g-3 align-items-end"
+            >
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Fecha desde
+                    </label>
+
+                    <input
+                        type="date"
+                        name="fecha_desde"
+                        value="{{ fecha_desde }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Fecha hasta
+                    </label>
+
+                    <input
+                        type="date"
+                        name="fecha_hasta"
+                        value="{{ fecha_hasta }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+                        Filtrar reporte
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+    <!-- RESUMEN -->
+    <!-- ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+
+        <!-- TOTAL VENDIDO -->
+
+        <div class="col-xl-4 col-lg-4 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Total vendido
+                    </p>
+
+                    <h4 class="fw-bold mb-1">
+                        ${{ "{:,.0f}".format(total_ventas|float) }}
+                    </h4>
+
+                    <small class="text-muted">
+                        {{ cantidad_ventas }} ventas realizadas
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- GANANCIA -->
+
+        <div class="col-xl-4 col-lg-4 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Ganancia
+                    </p>
+
+                    <h4 class="fw-bold mb-1">
+                        $0
+                    </h4>
+
+                    <small class="text-muted">
+                        Utilidad estimada
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROMEDIO -->
+
+        <div class="col-xl-4 col-lg-4 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Promedio por venta
+                    </p>
+
+                    <h4 class="fw-bold mb-1">
+                        ${{ "{:,.0f}".format(promedio_venta|float) }}
+                    </h4>
+
+                    <small class="text-muted">
+                        Valor promedio
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+    <!-- MÉTODOS DE PAGO -->
+    <!-- ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+
+        <!-- DESCUENTOS -->
+
+        <div class="col-xl-3 col-lg-3 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Descuentos
+                    </p>
+
+                    <h5 class="fw-bold mb-0">
+                        ${{ "{:,.0f}".format(total_descuentos|float) }}
+                    </h5>
+
+                    <small class="text-muted">
+                        Descuentos aplicados
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EFECTIVO -->
+
+        <div class="col-xl-2 col-lg-2 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Efectivo
+                    </p>
+
+                    <h5 class="fw-bold mb-0">
+                        ${{ "{:,.0f}".format(efectivo|float) }}
+                    </h5>
+
+                    <small class="text-muted">
+                        {{ cantidad_efectivo }} ventas
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NEQUI -->
+
+        <div class="col-xl-2 col-lg-2 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Nequi
+                    </p>
+
+                    <h5 class="fw-bold mb-0">
+                        ${{ "{:,.0f}".format(nequi|float) }}
+                    </h5>
+
+                    <small class="text-muted">
+                        {{ cantidad_nequi }} ventas
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DAVIPLATA -->
+
+        <div class="col-xl-2 col-lg-2 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Daviplata
+                    </p>
+
+                    <h5 class="fw-bold mb-0">
+                        ${{ "{:,.0f}".format(daviplata|float) }}
+                    </h5>
+
+                    <small class="text-muted">
+                        {{ cantidad_daviplata }} ventas
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TRANSFERENCIA -->
+
+        <div class="col-xl-2 col-lg-2 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Transferencia
+                    </p>
+
+                    <h5 class="fw-bold mb-0">
+                        ${{ "{:,.0f}".format(transferencia|float) }}
+                    </h5>
+
+                    <small class="text-muted">
+                        {{ cantidad_transferencia }} ventas
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TARJETA -->
+
+        <div class="col-xl-2 col-lg-2 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1 small">
+                        Tarjeta
+                    </p>
+
+                    <h5 class="fw-bold mb-0">
+                        ${{ "{:,.0f}".format(tarjeta|float) }}
+                    </h5>
+
+                    <small class="text-muted">
+                        {{ cantidad_tarjeta }} ventas
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+    <!-- OTROS MÉTODOS -->
+    <!-- ====================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Ventas por método de pago
+                    </h5>
+
+                    <small class="text-muted">
+                        Distribución de las ventas del periodo
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3 mt-2">
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded">
+
+                        <div class="text-muted small">
+                            Crédito
+                        </div>
+
+                        <div class="fs-4 fw-bold">
+                            ${{ "{:,.0f}".format(credito|float) }}
+                        </div>
+
+                        <small class="text-muted">
+                            {{ cantidad_credito }} ventas
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded">
+
+                        <div class="text-muted small">
+                            Otros
+                        </div>
+
+                        <div class="fs-4 fw-bold">
+                            ${{ "{:,.0f}".format(otros|float) }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded">
+
+                        <div class="text-muted small">
+                            Productos vendidos
+                        </div>
+
+                        <div class="fs-4 fw-bold">
+                            {{ "{:,.0f}".format(productos_vendidos_total|float) }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+    <!-- INVENTARIO -->
+    <!-- ====================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="mb-4">
+                Estado del inventario
+            </h5>
+
+            <div class="row g-3">
+
+
+                <!-- BAJO STOCK -->
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded h-100">
+
+                        <div class="text-muted mb-1">
+                            Productos bajo stock
+                        </div>
+
+                        <h2 class="mb-0">
+                            {{ productos_bajo_stock|length }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AGOTADOS -->
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded h-100">
+
+                        <div class="text-muted mb-1">
+                            Productos agotados
+                        </div>
+
+                        <h2 class="mb-0">
+                            {{ productos_agotados }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VALOR INVENTARIO -->
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded h-100">
+
+                        <div class="text-muted mb-1">
+                            Valor del inventario
+                        </div>
+
+                        <h2 class="mb-0">
+                            ${{ "{:,.0f}".format(valor_inventario|float) }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+    <!-- PRODUCTOS MÁS VENDIDOS -->
+    <!-- ====================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Productos más vendidos
+                    </h5>
+
+                    <small class="text-muted">
+                        Productos con mayor movimiento
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            {% if productos_mas_vendidos %}
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Total vendido</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for producto in productos_mas_vendidos %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    #{{ loop.index }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ producto.nombre }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ producto.cantidad }}
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    ${{ "{:,.0f}".format(producto.total|float) }}
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center text-muted py-4">
+                No hay ventas en el periodo seleccionado.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+    <!-- PRODUCTOS BAJO STOCK -->
+    <!-- ====================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h5 class="mb-0">
+                    Productos con bajo stock
+                </h5>
+
+                <span class="badge bg-warning text-dark">
+                    {{ productos_bajo_stock|length }}
+                </span>
+
+            </div>
+
+
+            {% if productos_bajo_stock %}
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Producto</th>
+                            <th>Stock actual</th>
+                            <th>Stock mínimo</th>
+                            <th>Estado</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for producto in productos_bajo_stock %}
+
+                        <tr>
+
+                            <td>
+                                {{ producto.nombre }}
+                            </td>
+
+                            <td>
+                                {{ producto.stock }}
+                            </td>
+
+                            <td>
+                                {{ producto.stock_minimo }}
+                            </td>
+
+                            <td>
+
+                                {% if producto.stock <= 0 %}
+
+                                <span class="badge bg-danger">
+                                    Agotado
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Bajo stock
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center text-muted py-4">
+                Todos los productos tienen stock suficiente.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+    <!-- HISTORIAL DE VENTAS -->
+    <!-- ====================================================== -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <h5 class="mb-4">
+                Ventas del periodo
+            </h5>
+
+
+            {% if ventas %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Factura</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Método</th>
+                            <th>Total</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for venta in ventas %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    #{{ venta.id }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                {% if venta.fecha %}
+
+                                    {{ venta.fecha.strftime("%d/%m/%Y %H:%M") }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if venta.cliente %}
+
+                                    {{ venta.cliente.nombre }}
+
+                                {% else %}
+
+                                    Consumidor final
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {{ venta.metodo_pago|capitalize }}
+
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    ${{ "{:,.0f}".format(venta.total|float) }}
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center text-muted py-4">
+                No hay ventas para las fechas seleccionadas.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

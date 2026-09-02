@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}
+Usuarios | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Usuarios
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>Usuarios</h1>
+
+        <p style="color:#6b7280; margin-top:6px;">
+            Administra los usuarios de tu empresa
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('usuarios.nuevo') }}"
+        class="btn btn-primary"
+    >
+        + Nuevo usuario
+    </a>
+
+</div>
+
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Fecha creación</th>
+                <th>Acciones</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for usuario in usuarios %}
+
+            <tr>
+
+                <td>
+                    <strong>
+                        {{ usuario.nombre }}
+                    </strong>
+                </td>
+
+                <td>
+                    {{ usuario.email }}
+                </td>
+
+                <td>
+                    {% if usuario.rol_objeto %}
+                        {{ usuario.rol_objeto.nombre }}
+                    {% else %}
+                        Sin rol
+                    {% endif %}
+                </td>
+
+                <td>
+
+                    {% if usuario.activo %}
+
+                        <span
+                            style="
+                            background:#dcfce7;
+                            color:#166534;
+                            padding:5px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:600;
+                            "
+                        >
+                            Activo
+                        </span>
+
+                    {% else %}
+
+                        <span
+                            style="
+                            background:#fee2e2;
+                            color:#991b1b;
+                            padding:5px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:600;
+                            "
+                        >
+                            Inactivo
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+                    {{ usuario.fecha_creacion.strftime("%d/%m/%Y") }}
+                </td>
+
+                <td>
+
+                    <div class="actions">
+
+                        <a
+                            href="{{ url_for('usuarios.editar', id=usuario.id) }}"
+                            class="btn btn-secondary"
+                        >
+                            Editar
+                        </a>
+
+                        {% if usuario.id != current_user.id %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('usuarios.activar', id=usuario.id) }}"
+                            style="display:inline;"
+                        >
+
+                            {% if usuario.activo %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
+                                onclick="return confirm('¿Desactivar este usuario?')"
+                            >
+                                Desactivar
+                            </button>
+
+                            {% else %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                Activar
+                            </button>
+
+                            {% endif %}
+
+                        </form>
+
+                        {% endif %}
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% else %}
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    style="text-align:center; padding:40px;"
+                >
+                    No hay usuarios registrados.
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

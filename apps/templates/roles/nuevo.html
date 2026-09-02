@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+Nuevo rol | LogiDrink ERP
+
+{% endblock %}
+
+
+{% block page_title %}
+
+Nuevo rol
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Crear nuevo rol
+        </h1>
+
+        <p style="color:#6b7280; margin-top:5px;">
+            Define qué puede hacer este rol dentro de la empresa.
+        </p>
+
+    </div>
+
+</div>
+
+
+<form
+    method="POST"
+    class="form-container"
+    style="max-width:100%;"
+>
+
+
+    <!-- ======================================================
+         INFORMACIÓN DEL ROL
+    ======================================================= -->
+
+    <div class="form-group">
+
+        <label>
+            Nombre del rol
+        </label>
+
+        <input
+            type="text"
+            name="nombre"
+            placeholder="Ejemplo: Vendedor"
+            required
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Descripción
+        </label>
+
+        <textarea
+            name="descripcion"
+            rows="3"
+            placeholder="Describe las funciones de este rol"
+        ></textarea>
+
+    </div>
+
+
+    <!-- ======================================================
+         PERMISOS
+    ======================================================= -->
+
+    <h2 style="margin:30px 0 15px;">
+        Permisos
+    </h2>
+
+
+    {% if modulos %}
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Módulo
+                        </th>
+
+                        <th>
+                            Ver
+                        </th>
+
+                        <th>
+                            Crear
+                        </th>
+
+                        <th>
+                            Editar
+                        </th>
+
+                        <th>
+                            Eliminar
+                        </th>
+
+                        <th>
+                            Reportes
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for modulo in modulos %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ modulo.nombre }}
+                                </strong>
+
+                                {% if modulo.descripcion %}
+
+                                    <div
+                                        style="font-size:12px; color:#6b7280;"
+                                    >
+
+                                        {{ modulo.descripcion }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    type="checkbox"
+                                    name="ver_{{ modulo.id }}"
+                                >
+
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    type="checkbox"
+                                    name="crear_{{ modulo.id }}"
+                                >
+
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    type="checkbox"
+                                    name="editar_{{ modulo.id }}"
+                                >
+
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    type="checkbox"
+                                    name="eliminar_{{ modulo.id }}"
+                                >
+
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    type="checkbox"
+                                    name="reportes_{{ modulo.id }}"
+                                >
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    {% else %}
+
+        <div
+            style="
+                padding:20px;
+                background:#fff7ed;
+                border:1px solid #fed7aa;
+                border-radius:8px;
+                color:#9a3412;
+            "
+        >
+
+            Tu empresa no tiene módulos activos.
+
+            El SuperAdmin debe activar módulos antes de poder
+            asignar permisos.
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ======================================================
+         BOTONES
+    ======================================================= -->
+
+    <div
+        class="actions"
+        style="margin-top:25px;"
+    >
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+
+            Guardar rol
+
+        </button>
+
+
+        <a
+            href="{{ url_for('roles.index') }}"
+            class="btn btn-secondary"
+        >
+
+            Cancelar
+
+        </a>
+
+    </div>
+
+
+</form>
+
+
+{% endblock %}

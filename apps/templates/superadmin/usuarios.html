@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block title %}
+Usuarios | Superadministrador
+{% endblock %}
+
+{% block page_title %}
+Usuarios del sistema
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.superadmin-header {
+    margin-bottom: 25px;
+}
+
+.superadmin-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.superadmin-header p {
+    margin-top: 6px;
+    color: #6b7280;
+}
+
+.users-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.users-card-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.users-card-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.users-card-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.users-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table th {
+    padding: 14px 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.users-table td {
+    padding: 15px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+    font-size: 14px;
+}
+
+.users-table tr:last-child td {
+    border-bottom: none;
+}
+
+.users-table tr:hover {
+    background: #fafafa;
+}
+
+.user-id {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #111827;
+}
+
+.user-email {
+    color: #4b5563;
+}
+
+.company-name {
+    font-weight: 600;
+    color: #374151;
+}
+
+.no-company {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* ==========================================================
+   BADGES
+   ========================================================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-admin {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge-user {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.badge-superadmin {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+/* ==========================================================
+   ESTADO VACÍO
+   ========================================================== */
+
+.empty-users {
+    text-align: center;
+    padding: 45px 20px;
+    color: #6b7280;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 700px) {
+
+    .users-card-header {
+        padding: 16px;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 12px;
+    }
+
+}
+
+</style>
+
+
+<!-- ==========================================================
+     ENCABEZADO
+     ========================================================== -->
+
+<div class="superadmin-header">
+
+    <h1>
+        Usuarios del sistema
+    </h1>
+
+    <p>
+        Consulta de usuarios registrados en LogiDrink ERP.
+    </p>
+
+</div>
+
+
+<!-- ==========================================================
+     TABLA
+     ========================================================== -->
+
+<div class="users-card">
+
+    <div class="users-card-header">
+
+        <h2>
+            Usuarios registrados
+        </h2>
+
+        <p>
+            Vista administrativa del sistema.
+        </p>
+
+    </div>
+
+
+    <div class="users-table-container">
+
+        <table class="users-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+
+                    <th>
+                        Empresa
+                    </th>
+
+                    <th>
+                        Rol
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                    <th>
+                        Tipo
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for usuario in usuarios %}
+
+                <tr>
+
+                    <!-- ID -->
+
+                    <td class="user-id">
+                        {{ usuario.id }}
+                    </td>
+
+
+                    <!-- NOMBRE -->
+
+                    <td>
+
+                        <div class="user-name">
+                            {{ usuario.nombre }}
+                        </div>
+
+                    </td>
+
+
+                    <!-- EMAIL -->
+
+                    <td>
+
+                        <div class="user-email">
+                            {{ usuario.email }}
+                        </div>
+
+                    </td>
+
+
+                    <!-- EMPRESA -->
+
+                    <td>
+
+                        {% if usuario.empresa %}
+
+                            <span class="company-name">
+                                {{ usuario.empresa.nombre }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="no-company">
+                                Sin empresa
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ROL -->
+
+                    <td>
+
+                        {% if usuario.es_superadmin %}
+
+                            <span class="badge badge-superadmin">
+                                Superadministrador
+                            </span>
+
+                        {% elif usuario.rol_objeto %}
+
+                            <span class="badge badge-user">
+                                {{ usuario.rol_objeto.nombre }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-user">
+                                Sin rol
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ESTADO -->
+
+                    <td>
+
+                        {% if usuario.activo %}
+
+                            <span class="badge badge-active">
+                                Activo
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-inactive">
+                                Inactivo
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- TIPO DE USUARIO -->
+
+                    <td>
+
+                        {% if usuario.es_superadmin %}
+
+                            <span class="badge badge-superadmin">
+                                SuperAdmin
+                            </span>
+
+                        {% elif usuario.es_admin_empresa() %}
+
+                            <span class="badge badge-admin">
+                                Administrador
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-user">
+                                Usuario
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty-users"
+                    >
+
+                        No hay usuarios registrados.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

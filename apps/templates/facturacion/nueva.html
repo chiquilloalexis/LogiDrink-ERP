@@ -1,0 +1,1950 @@
+{% extends "base.html" %}
+
+{% block title %}
+Nueva Factura | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Nueva Factura
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+/* ==========================================================
+   CONTENEDOR
+========================================================== */
+
+.facturacion-page {
+    margin: -30px;
+    min-height: calc(100vh - 70px);
+    background: #f5f7fa;
+    padding: 25px;
+}
+
+.facturacion-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+/* ==========================================================
+   ENCABEZADO
+========================================================== */
+
+.facturacion-header {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.facturacion-header h1 {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.facturacion-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.btn-history {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 40px;
+    padding: 0 15px;
+
+    border-radius: 8px;
+
+    background: #f3f4f6;
+    color: #374151;
+
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.btn-history:hover {
+    background: #e5e7eb;
+}
+
+
+/* ==========================================================
+   ALERTA CAJA
+========================================================== */
+
+.cash-status {
+    border-radius: 10px;
+    padding: 13px 16px;
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.cash-open {
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+}
+
+.cash-closed {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.sale-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 350px;
+    gap: 18px;
+}
+
+
+/* ==========================================================
+   TARJETAS
+========================================================== */
+
+.sale-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.sale-card-header {
+    padding: 17px 20px;
+    border-bottom: 1px solid #e5e7eb;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.sale-card-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.sale-card-body {
+    padding: 20px;
+}
+
+
+/* ==========================================================
+   CAMPOS
+========================================================== */
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 7px;
+
+    color: #374151;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.form-control,
+.form-select {
+    width: 100%;
+    height: 42px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: white;
+
+    padding: 0 12px;
+
+    color: #111827;
+
+    font-size: 13px;
+
+    outline: none;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, .10);
+}
+
+
+/* ==========================================================
+   PRODUCTOS
+========================================================== */
+
+.product-selector {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 150px 100px;
+    gap: 10px;
+    align-items: end;
+}
+
+.btn-add-product {
+    height: 42px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #2563eb;
+    color: white;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.btn-add-product:hover {
+    background: #1d4ed8;
+}
+
+
+/* ==========================================================
+   TABLA
+========================================================== */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.products-table {
+    width: 100%;
+    min-width: 700px;
+
+    border-collapse: collapse;
+}
+
+.products-table th {
+    background: #f9fafb;
+
+    padding: 11px 10px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    color: #6b7280;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.products-table td {
+    padding: 12px 10px;
+
+    border-bottom: 1px solid #f0f0f0;
+
+    color: #374151;
+
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.products-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.product-name {
+    color: #111827;
+    font-weight: 800;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+
+/* ==========================================================
+   BADGES
+========================================================== */
+
+.sale-type {
+    display: inline-block;
+
+    padding: 4px 7px;
+
+    border-radius: 5px;
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.type-caja {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.type-unidad {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+
+/* ==========================================================
+   BOTÓN ELIMINAR
+========================================================== */
+
+.btn-remove {
+    width: 30px;
+    height: 30px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: #fee2e2;
+    color: #b91c1c;
+
+    cursor: pointer;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.btn-remove:hover {
+    background: #fecaca;
+}
+
+
+/* ==========================================================
+   ESTADO VACÍO
+========================================================== */
+
+.empty-products {
+    text-align: center;
+    padding: 45px 20px;
+
+    color: #9ca3af;
+}
+
+.empty-products-icon {
+    font-size: 38px;
+    margin-bottom: 8px;
+}
+
+.empty-products strong {
+    display: block;
+
+    color: #374151;
+
+    font-size: 14px;
+
+    margin-bottom: 5px;
+}
+
+.empty-products span {
+    font-size: 12px;
+}
+
+
+/* ==========================================================
+   RESUMEN
+========================================================== */
+
+.summary-card {
+    position: sticky;
+    top: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 9px 0;
+
+    font-size: 13px;
+
+    color: #6b7280;
+}
+
+.summary-row strong {
+    color: #111827;
+}
+
+.summary-total {
+    border-top: 2px solid #111827;
+
+    margin-top: 8px;
+    padding-top: 14px;
+
+    font-size: 21px;
+    font-weight: 900;
+
+    color: #111827;
+}
+
+.summary-total strong {
+    color: #111827;
+}
+
+
+/* ==========================================================
+   MÉTODO DE PAGO
+========================================================== */
+
+.payment-section {
+    margin-top: 20px;
+
+    border-top: 1px solid #e5e7eb;
+
+    padding-top: 18px;
+}
+
+
+/* ==========================================================
+   BOTÓN FACTURAR
+========================================================== */
+
+.btn-submit {
+    width: 100%;
+    height: 48px;
+
+    margin-top: 20px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #22c55e;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 900;
+
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background: #16a34a;
+}
+
+.btn-submit:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   INFORMACIÓN
+========================================================== */
+
+.info-box {
+    margin-top: 15px;
+
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+
+    border-radius: 8px;
+
+    padding: 11px 12px;
+
+    color: #1e40af;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 950px) {
+
+    .sale-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card {
+        position: static;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .facturacion-page {
+        margin: -20px;
+        padding: 12px;
+    }
+
+    .facturacion-header {
+        padding: 16px;
+    }
+
+    .facturacion-header h1 {
+        font-size: 19px;
+    }
+
+    .sale-card-body {
+        padding: 15px;
+    }
+
+    .product-selector {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* ==========================================================
+   CAMPOS OCULTOS
+========================================================== */
+
+.hidden-product-fields {
+    display: none;
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="facturacion-page">
+
+    <div class="facturacion-container">
+
+
+        <!-- ==================================================
+             ENCABEZADO
+        ================================================== -->
+
+        <div class="facturacion-header">
+
+            <div>
+
+                <h1>
+                    Nueva Factura
+                </h1>
+
+                <p>
+                    Registra una nueva venta de productos
+                </p>
+
+            </div>
+
+            <a
+                href="{{ url_for('facturacion.index') }}"
+                class="btn-history"
+            >
+                ← Historial de facturas
+            </a>
+
+        </div>
+
+
+        <!-- ==================================================
+             ESTADO DE CAJA
+        ================================================== -->
+
+        {% if caja_abierta %}
+
+        <div class="cash-status cash-open">
+
+            <span>●</span>
+
+            <span>
+                Caja abierta. Puedes registrar ventas.
+            </span>
+
+        </div>
+
+        {% else %}
+
+        <div class="cash-status cash-closed">
+
+            <span>●</span>
+
+            <span>
+                No hay una caja abierta. Debes abrir la caja
+                antes de registrar una venta.
+            </span>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- ==================================================
+             FORMULARIO
+        ================================================== -->
+
+        <form
+            method="POST"
+            action="{{ url_for('facturacion.pos') }}"
+            id="facturaForm"
+        >
+
+            <div class="sale-grid">
+
+
+                <!-- ==================================================
+                     COLUMNA PRINCIPAL
+                ================================================== -->
+
+                <div>
+
+
+                    <!-- ==============================================
+                         CLIENTE
+                    =============================================== -->
+
+                    <div class="sale-card">
+
+                        <div class="sale-card-header">
+
+                            <h2>
+                                👤 Información del cliente
+                            </h2>
+
+                        </div>
+
+                        <div class="sale-card-body">
+
+                            <div class="form-group">
+
+                                <label
+                                    for="cliente_id"
+                                    class="form-label"
+                                >
+                                    Cliente
+                                </label>
+
+                                <select
+                                    name="cliente_id"
+                                    id="cliente_id"
+                                    class="form-select"
+                                >
+
+                                    <option value="">
+                                        Cliente general
+                                    </option>
+
+                                    {% for cliente in clientes %}
+
+                                    <option
+                                        value="{{ cliente.id }}"
+                                    >
+
+                                        {{ cliente.nombre }}
+
+                                        {% if cliente.documento %}
+                                            - {{ cliente.documento }}
+                                        {% endif %}
+
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==============================================
+                         AGREGAR PRODUCTOS
+                    =============================================== -->
+
+                    <div
+                        class="sale-card"
+                        style="margin-top:18px;"
+                    >
+
+                        <div class="sale-card-header">
+
+                            <h2>
+                                📦 Agregar productos
+                            </h2>
+
+                        </div>
+
+                        <div class="sale-card-body">
+
+
+                            <div class="product-selector">
+
+
+                                <!-- PRODUCTO -->
+
+                                <div>
+
+                                    <label
+                                        for="productoSelector"
+                                        class="form-label"
+                                    >
+                                        Producto
+                                    </label>
+
+                                    <select
+                                        id="productoSelector"
+                                        class="form-select"
+                                    >
+
+                                        <option value="">
+                                            Selecciona un producto
+                                        </option>
+
+                                        {% for producto in productos %}
+
+                                        <option
+                                            value="{{ producto.id }}"
+                                            data-nombre="{{ producto.nombre|e }}"
+                                            data-precio-unidad="{{ producto.precio_venta or 0 }}"
+                                            data-precio-caja="{{ producto.precio_venta_caja or 0 }}"
+                                            data-maneja-cajas="{{ '1' if producto.maneja_cajas else '0' }}"
+                                            data-unidades-caja="{{ producto.unidades_por_caja or 0 }}"
+                                            data-stock="{{ producto.stock or 0 }}"
+                                        >
+
+                                            {{ producto.nombre }}
+
+                                            {% if producto.stock is not none %}
+                                                — Stock: {{ producto.stock }}
+                                            {% endif %}
+
+                                        </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+
+
+                                <!-- TIPO -->
+
+                                <div>
+
+                                    <label
+                                        for="tipoVentaSelector"
+                                        class="form-label"
+                                    >
+                                        Tipo de venta
+                                    </label>
+
+                                    <select
+                                        id="tipoVentaSelector"
+                                        class="form-select"
+                                    >
+
+                                        <option value="unidad">
+                                            Unidad
+                                        </option>
+
+                                        <option value="caja">
+                                            Caja
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <!-- CANTIDAD -->
+
+                                <div>
+
+                                    <label
+                                        for="cantidadSelector"
+                                        class="form-label"
+                                    >
+                                        Cantidad
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="cantidadSelector"
+                                        class="form-control"
+                                        min="1"
+                                        value="1"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- INFORMACIÓN DEL PRODUCTO -->
+
+                            <div
+                                id="productoInfo"
+                                class="info-box"
+                                style="display:none;"
+                            ></div>
+
+
+                            <button
+                                type="button"
+                                class="btn-add-product"
+                                id="btnAgregarProducto"
+                                style="margin-top:15px;"
+                            >
+                                + Agregar producto a la factura
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==============================================
+                         DETALLE DE PRODUCTOS
+                    =============================================== -->
+
+                    <div
+                        class="sale-card"
+                        style="margin-top:18px;"
+                    >
+
+                        <div class="sale-card-header">
+
+                            <h2>
+                                🧾 Productos de la factura
+                            </h2>
+
+                            <span
+                                id="contadorProductos"
+                                style="
+                                    background:#ecfdf5;
+                                    color:#15803d;
+                                    border:1px solid #bbf7d0;
+                                    padding:5px 9px;
+                                    border-radius:20px;
+                                    font-size:10px;
+                                    font-weight:800;
+                                "
+                            >
+                                0 productos
+                            </span>
+
+                        </div>
+
+
+                        <div class="table-wrapper">
+
+                            <table class="products-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Producto
+                                        </th>
+
+                                        <th>
+                                            Tipo
+                                        </th>
+
+                                        <th class="text-right">
+                                            Cantidad
+                                        </th>
+
+                                        <th class="text-right">
+                                            Precio
+                                        </th>
+
+                                        <th class="text-right">
+                                            Total
+                                        </th>
+
+                                        <th>
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody
+                                    id="productosFactura"
+                                >
+
+                                </tbody>
+
+                            </table>
+
+
+                            <!-- ESTADO VACÍO -->
+
+                            <div
+                                id="productosVacios"
+                                class="empty-products"
+                            >
+
+                                <div class="empty-products-icon">
+                                    📦
+                                </div>
+
+                                <strong>
+                                    No hay productos agregados
+                                </strong>
+
+                                <span>
+                                    Selecciona un producto y agrégalo
+                                    a la factura.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- ==================================================
+                     RESUMEN
+                ================================================== -->
+
+                <div>
+
+
+                    <div class="sale-card summary-card">
+
+
+                        <div class="sale-card-header">
+
+                            <h2>
+                                💰 Resumen de venta
+                            </h2>
+
+                        </div>
+
+
+                        <div class="sale-card-body">
+
+
+                            <div class="summary-row">
+
+                                <span>
+                                    Productos
+                                </span>
+
+                                <strong id="resumenCantidad">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="summary-row">
+
+                                <span>
+                                    Subtotal
+                                </span>
+
+                                <strong id="resumenSubtotal">
+                                    $0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="summary-row">
+
+                                <span>
+                                    Descuento
+                                </span>
+
+                                <strong>
+                                    $0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="summary-row summary-total">
+
+                                <span>
+                                    TOTAL
+                                </span>
+
+                                <strong id="resumenTotal">
+                                    $0
+                                </strong>
+
+                            </div>
+
+
+                            <!-- ======================================
+                                 MÉTODO DE PAGO
+                            ======================================= -->
+
+                            <div class="payment-section">
+
+                                <div class="form-group">
+
+                                    <label
+                                        for="metodo_pago"
+                                        class="form-label"
+                                    >
+                                        Método de pago
+                                    </label>
+
+                                    <select
+                                        name="metodo_pago"
+                                        id="metodo_pago"
+                                        class="form-select"
+                                    >
+
+                                        <option value="efectivo">
+                                            Efectivo
+                                        </option>
+
+                                        <option value="nequi">
+                                            Nequi
+                                        </option>
+
+                                        <option value="daviplata">
+                                            Daviplata
+                                        </option>
+
+                                        <option value="transferencia">
+                                            Transferencia
+                                        </option>
+
+                                        <option value="tarjeta">
+                                            Tarjeta
+                                        </option>
+
+                                        <option value="credito">
+                                            Crédito
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <!-- ==================================
+                                     BOTÓN
+                                =================================== -->
+
+                                <button
+                                    type="submit"
+                                    class="btn-submit"
+                                    id="btnFacturar"
+                                    disabled
+                                >
+                                    🧾 Crear factura
+                                </button>
+
+
+                                <div class="info-box">
+
+                                    <strong>
+                                        Importante:
+                                    </strong>
+
+                                    La venta se registrará en la caja
+                                    abierta y el inventario será
+                                    descontado automáticamente.
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ==================================================
+                 LOS CAMPOS REALES SE GENERAN AQUÍ
+            ================================================== -->
+
+            <div
+                id="camposProductos"
+                class="hidden-product-fields"
+            ></div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==========================================================
+   VARIABLES
+========================================================== */
+
+const productoSelector =
+    document.getElementById("productoSelector");
+
+const tipoVentaSelector =
+    document.getElementById("tipoVentaSelector");
+
+const cantidadSelector =
+    document.getElementById("cantidadSelector");
+
+const productoInfo =
+    document.getElementById("productoInfo");
+
+const btnAgregarProducto =
+    document.getElementById("btnAgregarProducto");
+
+const productosFactura =
+    document.getElementById("productosFactura");
+
+const productosVacios =
+    document.getElementById("productosVacios");
+
+const camposProductos =
+    document.getElementById("camposProductos");
+
+const resumenSubtotal =
+    document.getElementById("resumenSubtotal");
+
+const resumenTotal =
+    document.getElementById("resumenTotal");
+
+const resumenCantidad =
+    document.getElementById("resumenCantidad");
+
+const contadorProductos =
+    document.getElementById("contadorProductos");
+
+const btnFacturar =
+    document.getElementById("btnFacturar");
+
+const facturaForm =
+    document.getElementById("facturaForm");
+
+
+/* ==========================================================
+   ARRAY DE PRODUCTOS
+========================================================== */
+
+let productosSeleccionados = [];
+
+
+/* ==========================================================
+   FORMATO MONEDA
+========================================================== */
+
+function formatoMoneda(valor) {
+
+    return "$" + Number(valor || 0).toLocaleString(
+        "es-CO",
+        {
+            maximumFractionDigits: 0
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   PRODUCTO SELECCIONADO
+========================================================== */
+
+function obtenerProductoSeleccionado() {
+
+    const option =
+        productoSelector.options[
+            productoSelector.selectedIndex
+        ];
+
+    if (!option || !option.value) {
+        return null;
+    }
+
+    return {
+
+        id: option.value,
+
+        nombre:
+            option.dataset.nombre || "",
+
+        precioUnidad:
+            Number(
+                option.dataset.precioUnidad || 0
+            ),
+
+        precioCaja:
+            Number(
+                option.dataset.precioCaja || 0
+            ),
+
+        manejaCajas:
+            option.dataset.manejaCajas === "1",
+
+        unidadesCaja:
+            Number(
+                option.dataset.unidadesCaja || 0
+            ),
+
+        stock:
+            Number(
+                option.dataset.stock || 0
+            )
+
+    };
+
+}
+
+
+/* ==========================================================
+   ACTUALIZAR INFORMACIÓN
+========================================================== */
+
+function actualizarInformacionProducto() {
+
+    const producto =
+        obtenerProductoSeleccionado();
+
+    if (!producto) {
+
+        productoInfo.style.display = "none";
+
+        return;
+    }
+
+
+    const tipo =
+        tipoVentaSelector.value;
+
+
+    let precio = 0;
+
+    let texto = "";
+
+
+    if (tipo === "caja") {
+
+        if (!producto.manejaCajas) {
+
+            productoInfo.style.display = "block";
+
+            productoInfo.innerHTML =
+                "⚠️ Este producto no está configurado para venderse por caja.";
+
+            return;
+        }
+
+
+        if (producto.unidadesCaja <= 0) {
+
+            productoInfo.style.display = "block";
+
+            productoInfo.innerHTML =
+                "⚠️ Este producto no tiene configuradas las unidades por caja.";
+
+            return;
+        }
+
+
+        precio = producto.precioCaja;
+
+
+        const cajasDisponibles =
+            Math.floor(
+                producto.stock /
+                producto.unidadesCaja
+            );
+
+
+        texto =
+            "📦 <strong>" +
+            producto.nombre +
+            "</strong> — " +
+            "Precio por caja: " +
+            formatoMoneda(precio) +
+            " — " +
+            producto.unidadesCaja +
+            " unidades por caja — " +
+            "Disponible: " +
+            cajasDisponibles +
+            " cajas";
+
+    }
+
+    else {
+
+        precio =
+            producto.precioUnidad;
+
+
+        texto =
+            "📦 <strong>" +
+            producto.nombre +
+            "</strong> — " +
+            "Precio por unidad: " +
+            formatoMoneda(precio) +
+            " — " +
+            "Stock disponible: " +
+            producto.stock +
+            " unidades";
+
+    }
+
+
+    if (precio <= 0) {
+
+        texto +=
+            "<br>⚠️ El producto no tiene un precio válido para este tipo de venta.";
+
+    }
+
+
+    productoInfo.innerHTML =
+        texto;
+
+    productoInfo.style.display =
+        "block";
+
+}
+
+
+/* ==========================================================
+   CAMBIAR PRODUCTO
+========================================================== */
+
+productoSelector.addEventListener(
+    "change",
+    function() {
+
+        actualizarInformacionProducto();
+
+    }
+);
+
+
+/* ==========================================================
+   CAMBIAR TIPO DE VENTA
+========================================================== */
+
+tipoVentaSelector.addEventListener(
+    "change",
+    function() {
+
+        actualizarInformacionProducto();
+
+    }
+);
+
+
+/* ==========================================================
+   AGREGAR PRODUCTO
+========================================================== */
+
+btnAgregarProducto.addEventListener(
+    "click",
+    function() {
+
+        const producto =
+            obtenerProductoSeleccionado();
+
+
+        if (!producto) {
+
+            alert(
+                "Selecciona un producto."
+            );
+
+            return;
+        }
+
+
+        const cantidad =
+            parseInt(
+                cantidadSelector.value,
+                10
+            );
+
+
+        if (
+            !cantidad ||
+            cantidad <= 0
+        ) {
+
+            alert(
+                "La cantidad debe ser mayor que cero."
+            );
+
+            cantidadSelector.focus();
+
+            return;
+        }
+
+
+        const tipoVenta =
+            tipoVentaSelector.value;
+
+
+        /* ==============================================
+           PRECIO
+        ============================================== */
+
+        let precio = 0;
+
+        let unidadesADescontar = 0;
+
+
+        if (tipoVenta === "caja") {
+
+
+            if (!producto.manejaCajas) {
+
+                alert(
+                    "Este producto no está configurado para venderse por caja."
+                );
+
+                return;
+            }
+
+
+            if (
+                !producto.unidadesCaja ||
+                producto.unidadesCaja <= 0
+            ) {
+
+                alert(
+                    "El producto no tiene configuradas las unidades por caja."
+                );
+
+                return;
+            }
+
+
+            precio =
+                producto.precioCaja;
+
+
+            unidadesADescontar =
+                cantidad *
+                producto.unidadesCaja;
+
+
+            if (
+                producto.stock <
+                unidadesADescontar
+            ) {
+
+                const cajasDisponibles =
+                    Math.floor(
+                        producto.stock /
+                        producto.unidadesCaja
+                    );
+
+
+                alert(
+                    "Stock insuficiente.\n\n" +
+                    "Producto: " +
+                    producto.nombre +
+                    "\n" +
+                    "Cajas disponibles: " +
+                    cajasDisponibles
+                );
+
+                return;
+            }
+
+        }
+
+        else {
+
+
+            precio =
+                producto.precioUnidad;
+
+
+            unidadesADescontar =
+                cantidad;
+
+
+            if (
+                producto.stock <
+                unidadesADescontar
+            ) {
+
+                alert(
+                    "Stock insuficiente.\n\n" +
+                    "Producto: " +
+                    producto.nombre +
+                    "\n" +
+                    "Unidades disponibles: " +
+                    producto.stock
+                );
+
+                return;
+            }
+
+        }
+
+
+        if (precio <= 0) {
+
+            alert(
+                "El producto no tiene precio configurado para este tipo de venta."
+            );
+
+            return;
+        }
+
+
+        /* ==============================================
+           AGREGAR AL ARRAY
+        ============================================== */
+
+        productosSeleccionados.push({
+
+            producto_id:
+                producto.id,
+
+            nombre:
+                producto.nombre,
+
+            cantidad:
+                cantidad,
+
+            tipo_venta:
+                tipoVenta,
+
+            precio:
+                precio,
+
+            subtotal:
+                precio * cantidad,
+
+            unidades_stock:
+                unidadesADescontar
+
+        });
+
+
+        /* ==============================================
+           ACTUALIZAR
+        ============================================== */
+
+        renderizarProductos();
+
+        actualizarCamposFormulario();
+
+        actualizarResumen();
+
+
+        /* ==============================================
+           LIMPIAR
+        ============================================== */
+
+        productoSelector.value = "";
+
+        cantidadSelector.value = "1";
+
+        tipoVentaSelector.value = "unidad";
+
+        productoInfo.style.display = "none";
+
+    }
+);
+
+
+/* ==========================================================
+   RENDERIZAR PRODUCTOS
+========================================================== */
+
+function renderizarProductos() {
+
+    productosFactura.innerHTML = "";
+
+
+    if (
+        productosSeleccionados.length === 0
+    ) {
+
+        productosVacios.style.display =
+            "block";
+
+        return;
+    }
+
+
+    productosVacios.style.display =
+        "none";
+
+
+    productosSeleccionados.forEach(
+        function(item, indice) {
+
+
+            const fila =
+                document.createElement("tr");
+
+
+            const tipoTexto =
+                item.tipo_venta === "caja"
+                    ? "CAJA"
+                    : "UNIDAD";
+
+
+            const tipoClase =
+                item.tipo_venta === "caja"
+                    ? "type-caja"
+                    : "type-unidad";
+
+
+            fila.innerHTML = `
+
+                <td>
+
+                    <div class="product-name">
+                        ${escapeHtml(item.nombre)}
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <span class="sale-type ${tipoClase}">
+                        ${tipoTexto}
+                    </span>
+
+                </td>
+
+
+                <td class="text-right">
+
+                    ${item.cantidad}
+
+                </td>
+
+
+                <td class="text-right">
+
+                    ${formatoMoneda(item.precio)}
+
+                </td>
+
+
+                <td class="text-right">
+
+                    <strong>
+                        ${formatoMoneda(item.subtotal)}
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="btn-remove"
+                        onclick="eliminarProducto(${indice})"
+                        title="Eliminar producto"
+                    >
+                        ×
+                    </button>
+
+                </td>
+
+            `;
+
+
+            productosFactura.appendChild(
+                fila
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   ESCAPAR HTML
+========================================================== */
+
+function escapeHtml(texto) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        texto;
+
+    return div.innerHTML;
+
+}
+
+
+/* ==========================================================
+   ELIMINAR PRODUCTO
+========================================================== */
+
+function eliminarProducto(indice) {
+
+    if (
+        indice < 0 ||
+        indice >= productosSeleccionados.length
+    ) {
+
+        return;
+    }
+
+
+    productosSeleccionados.splice(
+        indice,
+        1
+    );
+
+
+    renderizarProductos();
+
+    actualizarCamposFormulario();
+
+    actualizarResumen();
+
+}
+
+
+/* ==========================================================
+   CREAR CAMPOS PARA FLASK
+========================================================== */
+
+function actualizarCamposFormulario() {
+
+    camposProductos.innerHTML = "";
+
+
+    productosSeleccionados.forEach(
+        function(item) {
+
+
+            /* PRODUCTO */
+
+            const productoInput =
+                document.createElement("input");
+
+            productoInput.type =
+                "hidden";
+
+            productoInput.name =
+                "producto_id";
+
+            productoInput.value =
+                item.producto_id;
+
+
+            /* CANTIDAD */
+
+            const cantidadInput =
+                document.createElement("input");
+
+            cantidadInput.type =
+                "hidden";
+
+            cantidadInput.name =
+                "cantidad";
+
+            cantidadInput.value =
+                item.cantidad;
+
+
+            /* TIPO */
+
+            const tipoInput =
+                document.createElement("input");
+
+            tipoInput.type =
+                "hidden";
+
+            tipoInput.name =
+                "tipo_venta";
+
+            tipoInput.value =
+                item.tipo_venta;
+
+
+            camposProductos.appendChild(
+                productoInput
+            );
+
+            camposProductos.appendChild(
+                cantidadInput
+            );
+
+            camposProductos.appendChild(
+                tipoInput
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   ACTUALIZAR RESUMEN
+========================================================== */
+
+function actualizarResumen() {
+
+    let subtotal = 0;
+
+    let cantidadTotal = 0;
+
+
+    productosSeleccionados.forEach(
+        function(item) {
+
+            subtotal +=
+                Number(item.subtotal || 0);
+
+            cantidadTotal +=
+                Number(item.cantidad || 0);
+
+        }
+    );
+
+
+    resumenSubtotal.textContent =
+        formatoMoneda(subtotal);
+
+
+    resumenTotal.textContent =
+        formatoMoneda(subtotal);
+
+
+    resumenCantidad.textContent =
+        cantidadTotal;
+
+
+    contadorProductos.textContent =
+        productosSeleccionados.length +
+        (
+            productosSeleccionados.length === 1
+                ? " producto"
+                : " productos"
+        );
+
+
+    btnFacturar.disabled =
+        productosSeleccionados.length === 0;
+
+}
+
+
+/* ==========================================================
+   VALIDAR FORMULARIO ANTES DE ENVIAR
+========================================================== */
+
+facturaForm.addEventListener(
+    "submit",
+    function(event) {
+
+
+        if (
+            productosSeleccionados.length === 0
+        ) {
+
+            event.preventDefault();
+
+
+            alert(
+                "Debes agregar al menos un producto a la factura."
+            );
+
+
+            return;
+        }
+
+
+        actualizarCamposFormulario();
+
+
+        const confirmar =
+            confirm(
+                "¿Deseas crear esta factura?\n\n" +
+                "Total: " +
+                resumenTotal.textContent
+            );
+
+
+        if (!confirmar) {
+
+            event.preventDefault();
+
+            return;
+        }
+
+
+        btnFacturar.disabled =
+            true;
+
+        btnFacturar.innerHTML =
+            "⏳ Registrando venta...";
+
+    }
+);
+
+
+/* ==========================================================
+   INICIALIZAR
+========================================================== */
+
+actualizarResumen();
+
+</script>
+
+{% endblock %}

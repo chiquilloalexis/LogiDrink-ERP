@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}
+Módulos | Superadministrador
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ENCABEZADO -->
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold">
+            Gestión de módulos
+        </h1>
+
+        <p class="text-muted">
+            Administra los módulos disponibles para cada empresa.
+        </p>
+
+    </div>
+
+
+    <!-- SELECCIONAR EMPRESA -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form
+                method="GET"
+                action="{{ url_for('superadmin.modulos') }}"
+            >
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-8">
+
+                        <label class="form-label fw-semibold">
+                            Empresa
+                        </label>
+
+                        <select
+                            name="empresa_id"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Seleccionar empresa
+                            </option>
+
+                            {% for empresa in empresas %}
+
+                                <option
+                                    value="{{ empresa.id }}"
+                                    {% if empresa_seleccionada and empresa.id == empresa_seleccionada.id %}
+                                        selected
+                                    {% endif %}
+                                >
+
+                                    {{ empresa.nombre }}
+
+                                    {% if empresa.nit %}
+                                        — NIT {{ empresa.nit }}
+                                    {% endif %}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+
+                            Cargar módulos
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    {% if empresa_seleccionada %}
+
+        <!-- INFORMACIÓN DE EMPRESA -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h4 class="fw-bold mb-1">
+                            {{ empresa_seleccionada.nombre }}
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            NIT: {{ empresa_seleccionada.nit }}
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        {% if empresa_seleccionada.activa %}
+
+                            <span class="badge bg-success">
+                                Empresa activa
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+                                Empresa inactiva
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MÓDULOS -->
+
+        <form
+            method="POST"
+            action="{{ url_for('superadmin.modulos') }}"
+        >
+
+            <input
+                type="hidden"
+                name="empresa_id"
+                value="{{ empresa_seleccionada.id }}"
+            >
+
+
+            <div class="card shadow-sm border-0">
+
+                <!-- HEADER -->
+
+                <div class="card-header bg-white">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+                                Módulos del sistema
+                            </h5>
+
+                            <small class="text-muted">
+                                Activa o desactiva los módulos para esta empresa.
+                            </small>
+
+                        </div>
+
+
+                        <div class="d-flex gap-2">
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-primary"
+                                onclick="activarTodos()"
+                            >
+                                Activar todos
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-secondary"
+                                onclick="desactivarTodos()"
+                            >
+                                Desactivar todos
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CUERPO -->
+
+                <div class="card-body">
+
+                    {% if modulos %}
+
+                        <div class="row g-3">
+
+                            {% for modulo in modulos %}
+
+                                <div class="col-md-6 col-xl-4">
+
+                                    <div class="card border h-100">
+
+                                        <div class="card-body">
+
+                                            <div class="d-flex justify-content-between align-items-start">
+
+                                                <div class="pe-3">
+
+                                                    <h6 class="fw-bold mb-1">
+                                                        {{ modulo.nombre }}
+                                                    </h6>
+
+                                                    {% if modulo.descripcion %}
+
+                                                        <p class="text-muted small mb-0">
+                                                            {{ modulo.descripcion }}
+                                                        </p>
+
+                                                    {% else %}
+
+                                                        <p class="text-muted small mb-0">
+                                                            Módulo de LogiDrink ERP.
+                                                        </p>
+
+                                                    {% endif %}
+
+                                                </div>
+
+
+                                                <div class="form-check form-switch">
+
+                                                    <input
+                                                        class="form-check-input modulo-checkbox"
+                                                        type="checkbox"
+                                                        role="switch"
+                                                        name="modulo_{{ modulo.id }}"
+                                                        id="modulo_{{ modulo.id }}"
+                                                        {% if modulos_empresa.get(modulo.id, False) %}
+                                                            checked
+                                                        {% endif %}
+                                                    >
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="alert alert-warning mb-0">
+                            No existen módulos activos en el sistema.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                {% if modulos %}
+
+                    <div class="card-footer bg-white">
+
+                        <div class="d-flex justify-content-end gap-2">
+
+                            <a
+                                href="{{ url_for('superadmin.modulos') }}"
+                                class="btn btn-secondary"
+                            >
+                                Cancelar
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                Guardar módulos
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </form>
+
+
+    {% else %}
+
+        <!-- SIN EMPRESA -->
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body text-center py-5">
+
+                <div class="mb-3">
+
+                    <span style="font-size: 48px;">
+                        ⚙️
+                    </span>
+
+                </div>
+
+
+                <h4 class="fw-bold">
+                    Selecciona una empresa
+                </h4>
+
+
+                <p class="text-muted mb-0">
+                    Selecciona una empresa para administrar
+                    sus módulos disponibles.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+function activarTodos() {
+
+    document
+        .querySelectorAll(".modulo-checkbox")
+        .forEach(function(checkbox) {
+
+            checkbox.checked = true;
+
+        });
+
+}
+
+
+function desactivarTodos() {
+
+    document
+        .querySelectorAll(".modulo-checkbox")
+        .forEach(function(checkbox) {
+
+            checkbox.checked = false;
+
+        });
+
+}
+
+</script>
+
+{% endblock %}

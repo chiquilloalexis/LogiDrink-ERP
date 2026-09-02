@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+
+{% block title %}
+Proveedores | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Proveedores
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-description {
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .btn-primary {
+        background: #22c55e;
+        color: white;
+        text-decoration: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .btn-primary:hover {
+        background: #16a34a;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+        max-width: 280px;
+    }
+
+    .stat-label {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        text-align: left;
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 14px;
+    }
+
+    .provider-name {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .provider-contact {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .btn-edit {
+        background: #eff6ff;
+        color: #2563eb;
+        padding: 7px 11px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .btn-delete {
+        border: none;
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 7px 11px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #6b7280;
+    }
+
+    @media (max-width: 700px) {
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            Gestión de proveedores
+        </h2>
+
+        <div class="page-description">
+            Administra los proveedores de tu empresa.
+        </div>
+
+    </div>
+
+    <a
+        href="{{ url_for('proveedores.nuevo') }}"
+        class="btn-primary"
+    >
+        + Nuevo proveedor
+    </a>
+
+</div>
+
+
+<div class="stat-card">
+
+    <div class="stat-label">
+        Proveedores activos
+    </div>
+
+    <div class="stat-value">
+        {{ total_proveedores }}
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div class="card-title">
+            Proveedores
+        </div>
+
+        <div>
+            {{ total_proveedores }} registrados
+        </div>
+
+    </div>
+
+
+    {% if proveedores %}
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Proveedor
+                    </th>
+
+                    <th>
+                        NIT
+                    </th>
+
+                    <th>
+                        Teléfono
+                    </th>
+
+                    <th>
+                        Dirección
+                    </th>
+
+                    <th>
+                        Contacto
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for proveedor in proveedores %}
+
+                <tr>
+
+                    <td>
+
+                        <div class="provider-name">
+                            {{ proveedor.nombre }}
+                        </div>
+
+                        {% if proveedor.correo %}
+
+                        <div class="provider-contact">
+                            {{ proveedor.correo }}
+                        </div>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ proveedor.nit or "-" }}
+                    </td>
+
+
+                    <td>
+                        {{ proveedor.telefono or "-" }}
+                    </td>
+
+
+                    <td>
+                        {{ proveedor.direccion or "-" }}
+                    </td>
+
+
+                    <td>
+                        {{ proveedor.contacto or "-" }}
+                    </td>
+
+
+                    <td>
+
+                        <div class="actions">
+
+                            <a
+                                href="{{ url_for(
+                                    'proveedores.editar',
+                                    id=proveedor.id
+                                ) }}"
+                                class="btn-edit"
+                            >
+                                Editar
+                            </a>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'proveedores.desactivar',
+                                    id=proveedor.id
+                                ) }}"
+                                onsubmit="return confirm(
+                                    '¿Deseas desactivar este proveedor?'
+                                );"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn-delete"
+                                >
+                                    Desactivar
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <h3>
+            No hay proveedores registrados
+        </h3>
+
+        <p>
+            Registra tu primer proveedor para comenzar.
+        </p>
+
+        <a
+            href="{{ url_for('proveedores.nuevo') }}"
+            class="btn-primary"
+        >
+            Crear proveedor
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

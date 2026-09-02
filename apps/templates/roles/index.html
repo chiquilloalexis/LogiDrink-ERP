@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+Roles | LogiDrink ERP
+
+{% endblock %}
+
+
+{% block page_title %}
+
+Roles y permisos
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Roles y permisos
+        </h1>
+
+        <p style="color:#6b7280; margin-top:5px;">
+            Administra los roles y permisos de los usuarios de tu empresa.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('roles.nuevo') }}"
+        class="btn btn-primary"
+    >
+
+        + Nuevo rol
+
+    </a>
+
+</div>
+
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Rol
+                </th>
+
+                <th>
+                    Descripción
+                </th>
+
+                <th>
+                    Usuarios
+                </th>
+
+                <th>
+                    Estado
+                </th>
+
+                <th>
+                    Acciones
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for rol in roles %}
+
+                <tr>
+
+                    <td>
+
+                        <strong>
+                            {{ rol.nombre }}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+
+                        {{ rol.descripcion or "Sin descripción" }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ rol.usuarios|length }}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if rol.activo %}
+
+                            <span style="color:#16a34a; font-weight:600;">
+                                Activo
+                            </span>
+
+                        {% else %}
+
+                            <span style="color:#dc2626; font-weight:600;">
+                                Inactivo
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="actions">
+
+                            <a
+                                href="{{ url_for('roles.editar', id=rol.id) }}"
+                                class="btn btn-secondary"
+                            >
+
+                                Editar permisos
+
+                            </a>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('roles.activar', id=rol.id) }}"
+                                style="display:inline;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn {% if rol.activo %}btn-danger{% else %}btn-primary{% endif %}"
+                                >
+
+                                    {% if rol.activo %}
+
+                                        Desactivar
+
+                                    {% else %}
+
+                                        Activar
+
+                                    {% endif %}
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        style="text-align:center; padding:30px;"
+                    >
+
+                        No hay roles registrados.
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+{% endblock %}

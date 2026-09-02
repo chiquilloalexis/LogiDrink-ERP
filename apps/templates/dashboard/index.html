@@ -1,0 +1,1245 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+
+{% if es_dashboard_superadmin %}
+    Dashboard del sistema
+{% else %}
+    Dashboard
+{% endif %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+/* ==========================================================
+   GENERAL
+   ========================================================== */
+
+.dashboard-header {
+    margin-bottom: 24px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.dashboard-header p {
+    margin: 6px 0 0;
+    color: #6b7280;
+}
+
+
+/* ==========================================================
+   TARJETAS
+   ========================================================== */
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.dashboard-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-card-title {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.dashboard-card-value {
+    color: #111827;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.dashboard-card-description {
+    margin-top: 7px;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+
+/* ==========================================================
+   GRID
+   ========================================================== */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+
+/* ==========================================================
+   SECCIONES
+   ========================================================== */
+
+.dashboard-section {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-section h2 {
+    margin: 0 0 20px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+
+/* ==========================================================
+   LISTAS
+   ========================================================== */
+
+.dashboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dashboard-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px;
+    background: #f9fafb;
+    border-radius: 10px;
+}
+
+.dashboard-list-name {
+    font-weight: 600;
+    color: #374151;
+}
+
+.dashboard-list-value {
+    font-weight: 700;
+    color: #2563eb;
+}
+
+
+/* ==========================================================
+   ESTADOS
+   ========================================================== */
+
+.status-active {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-inactive {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   TABLAS
+   ========================================================== */
+
+.dashboard-table-container {
+    overflow-x: auto;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-table th {
+    text-align: left;
+    padding: 12px;
+    font-size: 13px;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dashboard-table td {
+    padding: 14px 12px;
+    font-size: 14px;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.dashboard-table tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* ==========================================================
+   ESTADO VACÍO
+   ========================================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 25px 10px;
+    color: #6b7280;
+}
+
+
+/* ==========================================================
+   GRÁFICO EMPRESA
+   ========================================================== */
+
+.chart-container {
+    width: 100%;
+}
+
+.chart-bars {
+    height: 260px;
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    padding: 10px 5px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.chart-column {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.chart-bar {
+    width: 55%;
+    min-height: 4px;
+    background: #2563eb;
+    border-radius: 6px 6px 0 0;
+    transition: opacity 0.2s;
+}
+
+.chart-bar:hover {
+    opacity: 0.75;
+}
+
+.chart-labels {
+    display: flex;
+    gap: 14px;
+    padding-top: 10px;
+}
+
+.chart-label {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+
+/* ==========================================================
+   STOCK
+   ========================================================== */
+
+.stock-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    background: #fff7ed;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.stock-name {
+    font-weight: 600;
+    color: #374151;
+}
+
+.stock-value {
+    font-weight: 700;
+    color: #dc2626;
+}
+
+
+/* ==========================================================
+   BADGE
+   ========================================================== */
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #ecfdf5;
+    color: #047857;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1100px) {
+
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-section {
+        padding: 16px;
+    }
+
+    .dashboard-card {
+        padding: 18px;
+    }
+
+}
+
+</style>
+
+
+{% if es_dashboard_superadmin %}
+
+<!-- ==========================================================
+     DASHBOARD SUPERADMIN
+     ========================================================== -->
+
+<div class="dashboard-header">
+
+    <h1>
+        Dashboard del sistema
+    </h1>
+
+    <p>
+        Resumen general de LogiDrink ERP
+    </p>
+
+</div>
+
+
+<!-- ==========================================================
+     TARJETAS PRINCIPALES
+     ========================================================== -->
+
+<div class="dashboard-cards">
+
+
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-title">
+            Empresas
+        </div>
+
+        <div class="dashboard-card-value">
+            {{ total_empresas }}
+        </div>
+
+        <div class="dashboard-card-description">
+            Empresas registradas
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-title">
+            Empresas activas
+        </div>
+
+        <div class="dashboard-card-value">
+            {{ empresas_activas }}
+        </div>
+
+        <div class="dashboard-card-description">
+            Empresas operando actualmente
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-title">
+            Usuarios
+        </div>
+
+        <div class="dashboard-card-value">
+            {{ total_usuarios }}
+        </div>
+
+        <div class="dashboard-card-description">
+            Usuarios de empresas
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-title">
+            Módulos disponibles
+        </div>
+
+        <div class="dashboard-card-value">
+            {{ modulos_activos }}
+        </div>
+
+        <div class="dashboard-card-description">
+            Módulos activos en el sistema
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ==========================================================
+     EMPRESAS Y USUARIOS
+     ========================================================== -->
+
+<div class="dashboard-grid">
+
+
+    <!-- EMPRESAS -->
+
+    <div class="dashboard-section">
+
+        <h2>
+            Estado de las empresas
+        </h2>
+
+
+        <div class="dashboard-list">
+
+
+            <div class="dashboard-list-item">
+
+                <span class="dashboard-list-name">
+                    Empresas activas
+                </span>
+
+                <span class="status-active">
+                    {{ empresas_activas }}
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-list-item">
+
+                <span class="dashboard-list-name">
+                    Empresas inactivas
+                </span>
+
+                <span class="status-inactive">
+                    {{ empresas_inactivas }}
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-list-item">
+
+                <span class="dashboard-list-name">
+                    Con módulos activos
+                </span>
+
+                <span class="dashboard-list-value">
+                    {{ empresas_con_modulos }}
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-list-item">
+
+                <span class="dashboard-list-name">
+                    Sin módulos activos
+                </span>
+
+                <span class="dashboard-list-value">
+                    {{ empresas_sin_modulos }}
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- USUARIOS -->
+
+    <div class="dashboard-section">
+
+        <h2>
+            Usuarios
+        </h2>
+
+
+        <div class="dashboard-list">
+
+
+            <div class="dashboard-list-item">
+
+                <span class="dashboard-list-name">
+                    Total
+                </span>
+
+                <span class="dashboard-list-value">
+                    {{ total_usuarios }}
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-list-item">
+
+                <span class="dashboard-list-name">
+                    Activos
+                </span>
+
+                <span class="status-active">
+                    {{ usuarios_activos }}
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-list-item">
+
+                <span class="dashboard-list-name">
+                    Inactivos
+                </span>
+
+                <span class="status-inactive">
+                    {{ usuarios_inactivos }}
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ==========================================================
+     EMPRESAS RECIENTES
+     ========================================================== -->
+
+<div
+    class="dashboard-section"
+    style="margin-bottom:24px;"
+>
+
+    <h2>
+        Empresas registradas recientemente
+    </h2>
+
+
+    <div class="dashboard-table-container">
+
+        <table class="dashboard-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Empresa
+                    </th>
+
+                    <th>
+                        NIT
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% if empresas_recientes %}
+
+                    {% for empresa in empresas_recientes %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ empresa.nombre }}
+                                </strong>
+                            </td>
+
+
+                            <td>
+                                {{ empresa.nit or "-" }}
+                            </td>
+
+
+                            <td>
+
+                                {% if empresa.activa %}
+
+                                    <span class="status-active">
+                                        Activa
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-inactive">
+                                        Inactiva
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="3"
+                            class="empty-state"
+                        >
+                            No hay empresas registradas.
+                        </td>
+
+                    </tr>
+
+                {% endif %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================================
+     USUARIOS POR EMPRESA + MÓDULOS
+     ========================================================== -->
+
+<div class="dashboard-grid">
+
+
+    <!-- USUARIOS POR EMPRESA -->
+
+    <div class="dashboard-section">
+
+        <h2>
+            Usuarios por empresa
+        </h2>
+
+
+        {% if usuarios_por_empresa %}
+
+            <div class="dashboard-list">
+
+                {% for empresa in usuarios_por_empresa %}
+
+                    <div class="dashboard-list-item">
+
+                        <span class="dashboard-list-name">
+                            {{ empresa[0] }}
+                        </span>
+
+                        <span class="dashboard-list-value">
+                            {{ empresa[1] }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                No hay usuarios registrados.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- MÓDULOS -->
+
+    <div class="dashboard-section">
+
+        <h2>
+            Módulos más asignados
+        </h2>
+
+
+        {% if modulos_mas_asignados %}
+
+            <div class="dashboard-list">
+
+                {% for modulo in modulos_mas_asignados %}
+
+                    <div class="dashboard-list-item">
+
+                        <span class="dashboard-list-name">
+                            {{ modulo[0] }}
+                        </span>
+
+                        <span class="dashboard-list-value">
+                            {{ modulo[1] }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                No hay módulos asignados todavía.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+<!-- ==========================================================
+     ESTADO DEL SISTEMA
+     ========================================================== -->
+
+<div class="dashboard-section">
+
+    <h2>
+        Estado del sistema
+    </h2>
+
+
+    <div class="dashboard-list">
+
+
+        <div class="dashboard-list-item">
+
+            <span class="dashboard-list-name">
+                Estado general
+            </span>
+
+            <span class="status-active">
+                Sistema activo
+            </span>
+
+        </div>
+
+
+        <div class="dashboard-list-item">
+
+            <span class="dashboard-list-name">
+                Módulos registrados
+            </span>
+
+            <span class="dashboard-list-value">
+                {{ total_modulos }}
+            </span>
+
+        </div>
+
+
+        <div class="dashboard-list-item">
+
+            <span class="dashboard-list-name">
+                Módulos activos
+            </span>
+
+            <span class="dashboard-list-value">
+                {{ modulos_activos }}
+            </span>
+
+        </div>
+
+
+        <div class="dashboard-list-item">
+
+            <span class="dashboard-list-name">
+                Módulos inactivos
+            </span>
+
+            <span class="dashboard-list-value">
+                {{ modulos_inactivos }}
+            </span>
+
+        </div>
+
+
+        <div class="dashboard-list-item">
+
+            <span class="dashboard-list-name">
+                Asignaciones activas
+            </span>
+
+            <span class="dashboard-list-value">
+                {{ modulos_empresa_activos }}
+            </span>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+{% else %}
+
+
+<!-- ==========================================================
+     DASHBOARD EMPRESA
+     ========================================================== -->
+
+<div class="dashboard-header">
+
+    <h1>
+        Dashboard
+    </h1>
+
+    <p>
+        Resumen general de tu empresa
+    </p>
+
+</div>
+
+
+<!-- ==========================================================
+     TARJETAS
+     ========================================================== -->
+
+<div class="dashboard-cards">
+
+
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-title">
+            Ventas del día
+        </div>
+
+        <div class="dashboard-card-value">
+            ${{ "{:,.0f}".format(ventas_hoy or 0) }}
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-title">
+            Productos
+        </div>
+
+        <div class="dashboard-card-value">
+            {{ total_productos }}
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-title">
+            Clientes
+        </div>
+
+        <div class="dashboard-card-value">
+            {{ total_clientes }}
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-title">
+            Stock bajo
+        </div>
+
+        <div class="dashboard-card-value">
+            {{ productos_stock_bajo }}
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ==========================================================
+     GRÁFICO + MÁS VENDIDOS
+     ========================================================== -->
+
+<div class="dashboard-grid">
+
+
+    <!-- VENTAS ÚLTIMOS 7 DÍAS -->
+
+    <div class="dashboard-section">
+
+        <h2>
+            Ventas de los últimos 7 días
+        </h2>
+
+
+        <div class="chart-container">
+
+            {% set max_venta =
+                ventas_7_dias
+                | map(attribute='total')
+                | max
+            %}
+
+
+            <div class="chart-bars">
+
+                {% for venta in ventas_7_dias %}
+
+                    {% if max_venta > 0 %}
+
+                        {% set altura =
+                            (venta.total / max_venta * 100)
+                        %}
+
+                    {% else %}
+
+                        {% set altura = 2 %}
+
+                    {% endif %}
+
+
+                    <div
+                        class="chart-column"
+                        title="${{ "{:,.0f}".format(venta.total) }}"
+                    >
+
+                        <div
+                            class="chart-bar"
+                            style="height: {{ altura }}%;"
+                        ></div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="chart-labels">
+
+                {% for venta in ventas_7_dias %}
+
+                    <div class="chart-label">
+                        {{ venta.fecha }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PRODUCTOS MÁS VENDIDOS -->
+
+    <div class="dashboard-section">
+
+        <h2>
+            Productos más vendidos
+        </h2>
+
+
+        {% if productos_mas_vendidos %}
+
+            <div class="dashboard-list">
+
+                {% for producto in productos_mas_vendidos %}
+
+                    <div class="dashboard-list-item">
+
+                        <span class="dashboard-list-name">
+                            {{ producto.nombre }}
+                        </span>
+
+                        <span class="dashboard-list-value">
+                            {{ producto.cantidad }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                Todavía no hay ventas registradas.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+<!-- ==========================================================
+     STOCK BAJO
+     ========================================================== -->
+
+<div
+    class="dashboard-section"
+    style="margin-bottom:24px;"
+>
+
+    <h2>
+        ⚠️ Productos con stock bajo
+    </h2>
+
+
+    {% if lista_stock_bajo %}
+
+        {% for producto in lista_stock_bajo %}
+
+            <div class="stock-item">
+
+                <span class="stock-name">
+                    {{ producto.nombre }}
+                </span>
+
+                <span class="stock-value">
+                    {{ producto.stock }} unidades
+                </span>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-state">
+            No hay productos con stock bajo.
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ==========================================================
+     ÚLTIMAS VENTAS
+     ========================================================== -->
+
+<div class="dashboard-section">
+
+    <h2>
+        Últimas ventas
+    </h2>
+
+
+    <div class="dashboard-table-container">
+
+        <table class="dashboard-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Factura
+                    </th>
+
+                    <th>
+                        Cliente
+                    </th>
+
+                    <th>
+                        Usuario
+                    </th>
+
+                    <th>
+                        Total
+                    </th>
+
+                    <th>
+                        Método
+                    </th>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% if ultimas_ventas %}
+
+                    {% for venta in ultimas_ventas %}
+
+                        <tr>
+
+                            <td>
+                                #{{ venta.id }}
+                            </td>
+
+
+                            <td>
+
+                                {% if venta.cliente %}
+
+                                    {{ venta.cliente.nombre }}
+
+                                {% else %}
+
+                                    Consumidor final
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if venta.usuario %}
+
+                                    {{ venta.usuario.nombre }}
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    ${{ "{:,.0f}".format(venta.total or 0) }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge">
+                                    {{ venta.metodo_pago | title }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {{ venta.fecha.strftime("%d/%m/%Y %H:%M") }}
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="empty-state"
+                        >
+                            No hay ventas registradas.
+                        </td>
+
+                    </tr>
+
+                {% endif %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% endif %}
+
+
+{% endblock %}

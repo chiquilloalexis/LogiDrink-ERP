@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}
+Facturación | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Facturación
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+.facturacion-page {
+    margin: -30px;
+    min-height: calc(100vh - 70px);
+    background: #f5f7fa;
+}
+
+.facturacion-header {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 22px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.facturacion-header h1 {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.facturacion-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.btn-nueva {
+    background: #22c55e;
+    color: white;
+    text-decoration: none;
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.btn-nueva:hover {
+    background: #16a34a;
+}
+
+.facturacion-content {
+    padding: 22px;
+}
+
+.facturacion-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 17px;
+    color: #111827;
+}
+
+.contador {
+    background: #ecfdf5;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.facturas-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.facturas-table th {
+    background: #f9fafb;
+    color: #6b7280;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 13px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.facturas-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+    color: #374151;
+}
+
+.facturas-table tr:hover {
+    background: #f9fafb;
+}
+
+.numero-factura {
+    color: #2563eb;
+    font-weight: 900;
+}
+
+.total {
+    color: #111827;
+    font-weight: 900;
+}
+
+.metodo {
+    display: inline-block;
+    background: #f3f4f6;
+    color: #374151;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.estado {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.estado-completada {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.estado-anulada {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.btn-ver {
+    display: inline-block;
+    background: #eff6ff;
+    color: #2563eb;
+    text-decoration: none;
+    padding: 7px 11px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.btn-ver:hover {
+    background: #dbeafe;
+}
+
+.vacio {
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.vacio-icono {
+    font-size: 50px;
+    margin-bottom: 12px;
+}
+
+.vacio h3 {
+    margin: 0 0 7px;
+    color: #374151;
+}
+
+.vacio p {
+    margin: 0;
+    color: #9ca3af;
+}
+
+@media (max-width: 700px) {
+
+    .facturacion-page {
+        margin: -20px;
+    }
+
+    .facturacion-header {
+        padding: 17px;
+    }
+
+    .facturacion-content {
+        padding: 12px;
+    }
+
+    .facturacion-header h1 {
+        font-size: 19px;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="facturacion-page">
+
+    <!-- ======================================================
+         ENCABEZADO
+    ======================================================= -->
+
+    <div class="facturacion-header">
+
+        <div>
+
+            <h1>
+                Facturación
+            </h1>
+
+            <p>
+                Historial y administración de facturas de venta
+            </p>
+
+        </div>
+
+        <a
+            href="{{ url_for('facturacion.pos') }}"
+            class="btn-nueva"
+        >
+            + Nueva venta
+        </a>
+
+    </div>
+
+
+    <!-- ======================================================
+         CONTENIDO
+    ======================================================= -->
+
+    <div class="facturacion-content">
+
+        <div class="facturacion-card">
+
+            <div class="card-header">
+
+                <h2>
+                    🧾 Historial de facturas
+                </h2>
+
+                <span class="contador">
+                    {{ ventas|length }} factura(s)
+                </span>
+
+            </div>
+
+
+            {% if ventas %}
+
+            <div class="table-wrapper">
+
+                <table class="facturas-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Factura
+                            </th>
+
+                            <th>
+                                Fecha
+                            </th>
+
+                            <th>
+                                Cliente
+                            </th>
+
+                            <th>
+                                Método de pago
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Acción
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for venta in ventas %}
+
+                        <tr>
+
+                            <td>
+
+                                <span class="numero-factura">
+                                    FAC-{{ "%06d"|format(venta.id) }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if venta.fecha %}
+
+                                    {{ venta.fecha.strftime(
+                                        '%d/%m/%Y %H:%M'
+                                    ) }}
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if venta.cliente %}
+
+                                    {{ venta.cliente.nombre }}
+
+                                    {% if venta.cliente.documento %}
+                                        <br>
+                                        <small>
+                                            {{ venta.cliente.documento }}
+                                        </small>
+                                    {% endif %}
+
+                                {% else %}
+
+                                    Cliente general
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="metodo">
+
+                                    {{ venta.metodo_pago
+                                        |replace('_', ' ')
+                                        |capitalize }}
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="total">
+
+                                    ${{ "{:,.0f}".format(
+                                        venta.total|float
+                                    ) }}
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if venta.estado == "completada" %}
+
+                                    <span class="estado estado-completada">
+                                        COMPLETADA
+                                    </span>
+
+                                {% elif venta.estado == "anulada" %}
+
+                                    <span class="estado estado-anulada">
+                                        ANULADA
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="estado">
+                                        {{ venta.estado|upper }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'facturacion.detalle',
+                                        id=venta.id
+                                    ) }}"
+                                    class="btn-ver"
+                                >
+                                    Ver factura
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="vacio">
+
+                <div class="vacio-icono">
+                    🧾
+                </div>
+
+                <h3>
+                    No hay facturas registradas
+                </h3>
+
+                <p>
+                    Las ventas que realices aparecerán automáticamente aquí.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

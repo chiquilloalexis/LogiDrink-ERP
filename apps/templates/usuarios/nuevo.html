@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}
+Nuevo usuario | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Nuevo usuario
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+.usuario-page {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.usuario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.usuario-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.usuario-header p {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.usuario-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 43px;
+    padding: 0 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    color: #111827;
+    font-size: 13px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, .10);
+}
+
+.form-help {
+    margin-top: 6px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.roles-info {
+    margin-top: 5px;
+    margin-bottom: 20px;
+    padding: 13px 15px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    color: #166534;
+    font-size: 12px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 7px;
+    border: none;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #22c55e;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #16a34a;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+@media (max-width: 700px) {
+
+    .usuario-page {
+        width: 100%;
+    }
+
+    .usuario-header {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+    .usuario-card {
+        padding: 20px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="usuario-page">
+
+    <div class="usuario-header">
+
+        <div>
+
+            <h1>
+                Nuevo usuario
+            </h1>
+
+            <p>
+                Crea un usuario y asigna sus permisos mediante un rol.
+            </p>
+
+        </div>
+
+        <a
+            href="{{ url_for('usuarios.index') }}"
+            class="btn btn-secondary"
+        >
+            ← Volver
+        </a>
+
+    </div>
+
+
+    <div class="usuario-card">
+
+        <div class="roles-info">
+            <strong>Roles disponibles:</strong>
+            Administrador, Cajero, Vendedor, Mesero y Bodeguero.
+        </div>
+
+
+        <form method="POST">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="nombre">
+                        Nombre completo
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        placeholder="Ej. Juan Pérez"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="correo@empresa.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Mínimo 6 caracteres"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <div class="form-help">
+                        La contraseña debe tener mínimo 6 caracteres.
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="rol_id">
+                        Rol del usuario
+                    </label>
+
+                    <select
+                        id="rol_id"
+                        name="rol_id"
+                        required
+                    >
+
+                        <option value="">
+                            Seleccionar rol
+                        </option>
+
+                        {% for rol in roles %}
+
+                            <option value="{{ rol.id }}">
+
+                                {{ rol.nombre }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <div class="form-help">
+                        El rol determina las funciones que podrá utilizar.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <a
+                    href="{{ url_for('usuarios.index') }}"
+                    class="btn btn-secondary"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Crear usuario
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

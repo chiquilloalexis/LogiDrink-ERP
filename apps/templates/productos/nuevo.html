@@ -1,0 +1,948 @@
+{% extends "base.html" %}
+
+{% block title %}
+Nuevo producto | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Nuevo producto
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+        font-size: 26px;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .page-description {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+        max-width: 950px;
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+        outline: none;
+        background: white;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.10);
+    }
+
+    .form-group textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    .help-text {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 5px;
+        line-height: 1.4;
+    }
+
+    /* ==========================================
+       IMAGEN DEL PRODUCTO
+    ========================================== */
+
+    .image-upload-box {
+        border: 2px dashed #d1d5db;
+        border-radius: 10px;
+        padding: 22px;
+        background: #fafafa;
+        transition: border-color .2s, background .2s;
+    }
+
+    .image-upload-box:hover {
+        border-color: #22c55e;
+        background: #f9fffb;
+    }
+
+    .image-upload-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .image-preview {
+        width: 110px;
+        height: 110px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+    }
+
+    .image-preview-placeholder {
+        text-align: center;
+        color: #9ca3af;
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .image-upload-info {
+        flex: 1;
+    }
+
+    .image-upload-info label {
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+
+    .image-input {
+        padding: 8px !important;
+        background: white !important;
+    }
+
+    @media (max-width: 600px) {
+        .image-upload-content {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .image-preview {
+            margin: 0 auto;
+        }
+    }
+
+    /* ==========================================
+       PRESENTACIÓN
+    ========================================== */
+
+    .presentation-box {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 18px;
+        background: #fafafa;
+    }
+
+    .checkbox-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        cursor: pointer;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+        cursor: pointer;
+        accent-color: #22c55e;
+    }
+
+    .checkbox-content {
+        flex: 1;
+    }
+
+    .checkbox-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .checkbox-description {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+        line-height: 1.4;
+    }
+
+    .box-fields {
+        display: none;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .box-fields.visible {
+        display: block;
+    }
+
+    .box-info {
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        color: #1e40af;
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 18px;
+    }
+
+    /* ==========================================
+       ACCIONES
+    ========================================== */
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .btn {
+        padding: 11px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .btn-cancel {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+    }
+
+    .btn-save {
+        background: #22c55e;
+        color: white;
+        border: none;
+    }
+
+    .btn-save:hover {
+        background: #16a34a;
+    }
+
+    /* ==========================================
+       ALERTAS
+    ========================================== */
+
+    .flash {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        max-width: 950px;
+    }
+
+    .flash-danger,
+    .flash-error {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .flash-success {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* ==========================================
+       RESPONSIVE
+    ========================================== */
+
+    @media (max-width: 700px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            text-align: center;
+        }
+    }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>Nuevo producto</h1>
+
+    <p class="page-description">
+        Registra un nuevo producto en el inventario de tu empresa.
+    </p>
+
+</div>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="flash flash-{{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+
+<form method="POST" enctype="multipart/form-data">
+
+    <div class="form-card">
+
+        <!-- ==========================================
+             INFORMACIÓN DEL PRODUCTO
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Información del producto
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="nombre">
+                        Nombre del producto *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        placeholder="Ej: Coca-Cola 1.5L"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="codigo">
+                        Código *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="codigo"
+                        name="codigo"
+                        placeholder="Ej: CC1500"
+                        required
+                    >
+
+                    <span class="help-text">
+                        El código debe ser único dentro de tu empresa.
+                    </span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="categoria">
+                        Categoría
+                    </label>
+
+                    <input
+                        type="text"
+                        id="categoria"
+                        name="categoria"
+                        placeholder="Ej: Gaseosas"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="descripcion">
+                        Descripción
+                    </label>
+
+                    <input
+                        type="text"
+                        id="descripcion"
+                        name="descripcion"
+                        placeholder="Descripción del producto"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             IMAGEN DEL PRODUCTO
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Imagen del producto
+            </div>
+
+            <div class="image-upload-box">
+
+                <div class="image-upload-content">
+
+                    <div class="image-preview">
+
+                        <img
+                            id="imagen-preview"
+                            src=""
+                            alt="Vista previa del producto"
+                        >
+
+                        <div
+                            class="image-preview-placeholder"
+                            id="imagen-placeholder"
+                        >
+                            Vista previa
+                        </div>
+
+                    </div>
+
+
+                    <div class="image-upload-info">
+
+                        <label for="imagen">
+                            Imagen del producto
+                        </label>
+
+                        <input
+                            type="file"
+                            id="imagen"
+                            name="imagen"
+                            class="image-input"
+                            accept="image/jpeg,image/png,image/webp,image/gif"
+                        >
+
+                        <span class="help-text">
+                            Puedes subir una imagen JPG, PNG, WEBP o GIF.
+                            Tamaño máximo: 5 MB.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             PRECIOS
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Precios
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="precio_compra">
+                        Precio de compra por unidad *
+                    </label>
+
+                    <input
+                        type="number"
+                        id="precio_compra"
+                        name="precio_compra"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="precio_venta">
+                        Precio de venta por unidad *
+                    </label>
+
+                    <input
+                        type="number"
+                        id="precio_venta"
+                        name="precio_venta"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             PRESENTACIÓN
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Presentación
+            </div>
+
+            <div class="presentation-box">
+
+                <label class="checkbox-row">
+
+                    <input
+                        type="checkbox"
+                        id="maneja_cajas"
+                        name="maneja_cajas"
+                        value="1"
+                    >
+
+                    <div class="checkbox-content">
+
+                        <div class="checkbox-title">
+                            Este producto se maneja por cajas
+                        </div>
+
+                        <div class="checkbox-description">
+                            Activa esta opción si el producto se compra o vende
+                            también en cajas.
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <div
+                    id="box-fields"
+                    class="box-fields"
+                >
+
+                    <div class="box-info">
+
+                        Define cuántas unidades contiene
+                        <strong>una caja de este producto</strong>.
+                        No existe una cantidad fija: puedes colocar
+                        6, 9, 12, 24, 30, etc.
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="unidades_por_caja">
+                                Unidades por caja *
+                            </label>
+
+                            <input
+                                type="number"
+                                id="unidades_por_caja"
+                                name="unidades_por_caja"
+                                min="1"
+                                step="1"
+                                value="1"
+                            >
+
+                            <span class="help-text">
+                                Ejemplo: si una caja trae 12 unidades,
+                                escribe 12.
+                            </span>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="precio_compra_caja">
+                                Precio de compra por caja
+                            </label>
+
+                            <input
+                                type="number"
+                                id="precio_compra_caja"
+                                name="precio_compra_caja"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="precio_venta_caja">
+                                Precio de venta por caja
+                            </label>
+
+                            <input
+                                type="number"
+                                id="precio_venta_caja"
+                                name="precio_venta_caja"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             INVENTARIO
+        =========================================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+                Inventario
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="stock">
+                        Stock inicial *
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock"
+                        name="stock"
+                        min="0"
+                        step="1"
+                        value="0"
+                        required
+                    >
+
+                    <span class="help-text">
+                        El stock siempre se almacena internamente
+                        como unidades.
+                    </span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="stock_minimo">
+                        Stock mínimo *
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock_minimo"
+                        name="stock_minimo"
+                        min="0"
+                        step="1"
+                        value="0"
+                        required
+                    >
+
+                    <span class="help-text">
+                        Se utilizará para detectar productos con stock bajo.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             BOTONES
+        =========================================== -->
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('productos.index') }}"
+                class="btn btn-cancel"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-save"
+            >
+                Guardar producto
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+<script>
+
+    /* ==========================================
+       PRESENTACIÓN POR CAJAS
+    ========================================== */
+
+    const manejaCajas =
+        document.getElementById("maneja_cajas");
+
+    const boxFields =
+        document.getElementById("box-fields");
+
+    const unidadesPorCaja =
+        document.getElementById("unidades_por_caja");
+
+    const precioCompraCaja =
+        document.getElementById("precio_compra_caja");
+
+    const precioVentaCaja =
+        document.getElementById("precio_venta_caja");
+
+
+    function actualizarPresentacion() {
+
+        if (manejaCajas.checked) {
+
+            boxFields.classList.add("visible");
+
+            unidadesPorCaja.required = true;
+
+        } else {
+
+            boxFields.classList.remove("visible");
+
+            unidadesPorCaja.required = false;
+
+            unidadesPorCaja.value = 1;
+
+            precioCompraCaja.value = 0;
+
+            precioVentaCaja.value = 0;
+
+        }
+
+    }
+
+
+    manejaCajas.addEventListener(
+        "change",
+        actualizarPresentacion
+    );
+
+
+    actualizarPresentacion();
+
+
+    /* ==========================================
+       VISTA PREVIA DE LA IMAGEN
+    ========================================== */
+
+    const imagenInput =
+        document.getElementById("imagen");
+
+    const imagenPreview =
+        document.getElementById("imagen-preview");
+
+    const imagenPlaceholder =
+        document.getElementById("imagen-placeholder");
+
+
+    imagenInput.addEventListener(
+        "change",
+        function () {
+
+            const archivo = this.files[0];
+
+            if (!archivo) {
+
+                imagenPreview.src = "";
+
+                imagenPreview.style.display = "none";
+
+                imagenPlaceholder.style.display = "block";
+
+                return;
+
+            }
+
+
+            const tiposPermitidos = [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif"
+            ];
+
+
+            if (!tiposPermitidos.includes(archivo.type)) {
+
+                alert(
+                    "La imagen debe ser JPG, PNG, WEBP o GIF."
+                );
+
+                this.value = "";
+
+                imagenPreview.src = "";
+
+                imagenPreview.style.display = "none";
+
+                imagenPlaceholder.style.display = "block";
+
+                return;
+
+            }
+
+
+            if (archivo.size > 5 * 1024 * 1024) {
+
+                alert(
+                    "La imagen no puede superar los 5 MB."
+                );
+
+                this.value = "";
+
+                imagenPreview.src = "";
+
+                imagenPreview.style.display = "none";
+
+                imagenPlaceholder.style.display = "block";
+
+                return;
+
+            }
+
+
+            const lector = new FileReader();
+
+
+            lector.onload = function (evento) {
+
+                imagenPreview.src =
+                    evento.target.result;
+
+                imagenPreview.style.display = "block";
+
+                imagenPlaceholder.style.display = "none";
+
+            };
+
+
+            lector.readAsDataURL(archivo);
+
+        }
+    );
+
+</script>
+
+{% endblock %}

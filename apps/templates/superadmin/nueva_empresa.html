@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %}
+Nueva Empresa | Superadministrador
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ==================================================
+         ENCABEZADO
+    ================================================== -->
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold">
+            Nueva empresa
+        </h1>
+
+        <p class="text-muted">
+            Registra una nueva empresa y crea su usuario administrador.
+        </p>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                <!-- ==================================================
+                     DATOS DE LA EMPRESA
+                ================================================== -->
+
+                <div class="mb-4">
+
+                    <h4 class="fw-bold">
+                        Datos de la empresa
+                    </h4>
+
+                    <p class="text-muted mb-3">
+                        Información principal de la empresa.
+                    </p>
+
+                </div>
+
+
+                <div class="row g-3">
+
+                    <!-- NOMBRE -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Nombre de la empresa *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="nombre"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- NIT -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            NIT *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="nit"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DIRECCIÓN -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Dirección
+                        </label>
+
+                        <input
+                            type="text"
+                            name="direccion"
+                            class="form-control"
+                        >
+
+                    </div>
+
+
+                    <!-- TELÉFONO -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Teléfono
+                        </label>
+
+                        <input
+                            type="text"
+                            name="telefono"
+                            class="form-control"
+                        >
+
+                    </div>
+
+
+                    <!-- CORREO EMPRESA -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Correo electrónico de la empresa
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     SEPARADOR
+                ================================================== -->
+
+                <hr class="my-5">
+
+
+                <!-- ==================================================
+                     ADMINISTRADOR
+                ================================================== -->
+
+                <div class="mb-4">
+
+                    <h4 class="fw-bold">
+                        Usuario administrador
+                    </h4>
+
+                    <p class="text-muted mb-3">
+                        Este usuario podrá iniciar sesión y administrar
+                        esta empresa.
+                    </p>
+
+                </div>
+
+
+                <div class="row g-3">
+
+                    <!-- NOMBRE ADMIN -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Nombre del administrador *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="admin_nombre"
+                            class="form-control"
+                            placeholder="Ej: Juan Pérez"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- CORREO LOGIN -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Correo de acceso *
+                        </label>
+
+                        <input
+                            type="email"
+                            name="admin_email"
+                            class="form-control"
+                            placeholder="Ej: admin@empresa.com"
+                            required
+                        >
+
+                        <div class="form-text">
+                            Este será el correo que utilizará para iniciar sesión.
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONTRASEÑA -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Contraseña *
+                        </label>
+
+                        <input
+                            type="password"
+                            name="admin_password"
+                            class="form-control"
+                            minlength="6"
+                            required
+                        >
+
+                        <div class="form-text">
+                            Mínimo 6 caracteres.
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRMAR CONTRASEÑA -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Confirmar contraseña *
+                        </label>
+
+                        <input
+                            type="password"
+                            name="admin_password_confirmacion"
+                            class="form-control"
+                            minlength="6"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     INFORMACIÓN
+                ================================================== -->
+
+                <div class="alert alert-info mt-4">
+
+                    <strong>Importante:</strong>
+
+                    El administrador será creado automáticamente
+                    y quedará vinculado a esta empresa con el rol
+                    <strong>Administrador</strong>.
+
+                </div>
+
+
+                <!-- ==================================================
+                     BOTONES
+                ================================================== -->
+
+                <div class="mt-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Crear empresa y administrador
+                    </button>
+
+
+                    <a
+                        href="{{ url_for('superadmin.empresas') }}"
+                        class="btn btn-secondary"
+                    >
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

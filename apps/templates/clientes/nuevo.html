@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo cliente | LogiDrink ERP</title>
+</head>
+<body>
+
+    <h1>LogiDrink ERP</h1>
+
+    <h2>Registrar cliente</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+
+        <div>
+            <label for="nombre">Nombre completo</label>
+            <br>
+            <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                required
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="documento">Documento</label>
+            <br>
+            <input
+                type="text"
+                id="documento"
+                name="documento"
+                required
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="telefono">Teléfono</label>
+            <br>
+            <input
+                type="text"
+                id="telefono"
+                name="telefono"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="direccion">Dirección</label>
+            <br>
+            <input
+                type="text"
+                id="direccion"
+                name="direccion"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="email">Correo electrónico</label>
+            <br>
+            <input
+                type="email"
+                id="email"
+                name="email"
+            >
+        </div>
+
+        <br>
+
+        <button type="submit">
+            Guardar cliente
+        </button>
+
+        <a href="{{ url_for('clientes.index') }}">
+            Cancelar
+        </a>
+
+    </form>
+
+</body>
+</html>

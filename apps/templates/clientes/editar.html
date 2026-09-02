@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar cliente | LogiDrink ERP</title>
+</head>
+<body>
+
+    <h1>LogiDrink ERP</h1>
+
+    <h2>Editar cliente</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+
+        <div>
+            <label for="nombre">Nombre completo</label>
+            <br>
+            <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value="{{ cliente.nombre }}"
+                required
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="documento">Documento</label>
+            <br>
+            <input
+                type="text"
+                id="documento"
+                name="documento"
+                value="{{ cliente.documento }}"
+                required
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="telefono">Teléfono</label>
+            <br>
+            <input
+                type="text"
+                id="telefono"
+                name="telefono"
+                value="{{ cliente.telefono or '' }}"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="direccion">Dirección</label>
+            <br>
+            <input
+                type="text"
+                id="direccion"
+                name="direccion"
+                value="{{ cliente.direccion or '' }}"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="email">Correo electrónico</label>
+            <br>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ cliente.email or '' }}"
+            >
+        </div>
+
+        <br>
+
+        <button type="submit">
+            Guardar cambios
+        </button>
+
+        <a href="{{ url_for('clientes.index') }}">
+            Cancelar
+        </a>
+
+    </form>
+
+</body>
+</html>

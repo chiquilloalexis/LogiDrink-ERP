@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}
+Superadministrador | LogiDrink ERP
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-1">Superadministrador</h1>
+            <p class="text-muted mb-0">
+                Administración general de LogiDrink ERP
+            </p>
+        </div>
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Empresas</p>
+                    <h2 class="fw-bold mb-0">{{ empresas|length }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Usuarios</p>
+                    <h2 class="fw-bold mb-0">{{ usuarios|length }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Estado del sistema</p>
+                    <h2 class="fw-bold text-success mb-0">
+                        Activo
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ACCESOS -->
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <h4 class="fw-bold">
+                        Empresas
+                    </h4>
+
+                    <p class="text-muted">
+                        Administra las empresas que utilizan
+                        LogiDrink ERP.
+                    </p>
+
+                    <a
+                        href="{{ url_for('superadmin.empresas') }}"
+                            class="btn btn-primary"
+                            >
+                            Administrar empresas
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <h4 class="fw-bold">
+                        Módulos
+                    </h4>
+
+                    <p class="text-muted">
+                        Controla qué módulos están disponibles
+                        para cada empresa.
+                    </p>
+
+                    <a href="{{ url_for('superadmin.modulos') }}"
+                       class="btn btn-primary">
+                        Administrar módulos
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <h4 class="fw-bold">
+                        Usuarios
+                    </h4>
+
+                    <p class="text-muted">
+                        Consulta y administra los usuarios
+                        registrados en el sistema.
+                    </p>
+
+                    <a href="{{ url_for('superadmin.usuarios') }}"
+                       class="btn btn-primary">
+                        Administrar usuarios
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,789 @@
+{% extends "base.html" %}
+
+{% block title %}
+Historial de inventario | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Historial de inventario
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .inventory-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        gap: 20px;
+    }
+
+    .inventory-description {
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        background: #22c55e;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #16a34a;
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .stat-label {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .filter-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .filter-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 15px;
+    }
+
+    .filters {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #4b5563;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: white;
+        color: #111827;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+    }
+
+    .history-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .card-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .movement-count {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        min-width: 1000px;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        text-align: left;
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .product-code {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .badge-entrada {
+        background: #ecfdf5;
+        color: #15803d;
+    }
+
+    .badge-salida {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .quantity-entrada {
+        color: #15803d;
+        font-weight: 700;
+    }
+
+    .quantity-salida {
+        color: #dc2626;
+        font-weight: 700;
+    }
+
+    .stock-flow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .stock-before {
+        color: #6b7280;
+    }
+
+    .stock-arrow {
+        color: #9ca3af;
+    }
+
+    .stock-after {
+        color: #111827;
+        font-weight: 700;
+    }
+
+    .user-name {
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .date-cell {
+        color: #4b5563;
+        white-space: nowrap;
+    }
+
+    .reason {
+        color: #6b7280;
+        max-width: 220px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 55px 20px;
+        color: #6b7280;
+    }
+
+    .empty-icon {
+        font-size: 38px;
+        margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 1000px) {
+        .filters {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-action {
+            grid-column: span 2;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .inventory-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .filters {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-action {
+            grid-column: auto;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .header-actions .btn {
+            flex: 1;
+            text-align: center;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="inventory-header">
+
+
+<div>
+    <h2>Historial de movimientos</h2>
+
+    <div class="inventory-description">
+        Consulta todas las entradas y salidas realizadas en el inventario.
+    </div>
+</div>
+
+<div class="header-actions">
+
+    <a
+        href="{{ url_for('inventario.index') }}"
+        class="btn btn-secondary"
+    >
+        ← Inventario
+    </a>
+
+    <a
+        href="{{ url_for('inventario.entrada') }}"
+        class="btn btn-primary"
+    >
+        + Registrar entrada
+    </a>
+
+</div>
+
+
+</div>
+
+<div class="stats-grid">
+
+
+<div class="stat-card">
+
+    <div class="stat-label">
+        Total movimientos
+    </div>
+
+    <div class="stat-value">
+        {{ movimientos|length }}
+    </div>
+
+</div>
+
+
+<div class="stat-card">
+
+    <div class="stat-label">
+        Entradas
+    </div>
+
+    <div class="stat-value">
+        {{ total_entradas }}
+    </div>
+
+</div>
+
+
+<div class="stat-card">
+
+    <div class="stat-label">
+        Salidas
+    </div>
+
+    <div class="stat-value">
+        {{ total_salidas }}
+    </div>
+
+</div>
+
+
+</div>
+
+<div class="filter-card">
+
+
+<div class="filter-title">
+    Filtrar movimientos
+</div>
+
+<form method="GET">
+
+    <div class="filters">
+
+        <div class="form-group">
+
+            <label for="producto">
+                Producto
+            </label>
+
+            <select
+                name="producto_id"
+                id="producto"
+                class="form-control"
+            >
+
+                <option value="">
+                    Todos los productos
+                </option>
+
+                {% for producto in productos %}
+
+                    <option
+                        value="{{ producto.id }}"
+                        {% if producto_id|string == producto.id|string %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ producto.nombre }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="tipo">
+                Tipo
+            </label>
+
+            <select
+                name="tipo"
+                id="tipo"
+                class="form-control"
+            >
+
+                <option value="">
+                    Todos
+                </option>
+
+                <option
+                    value="entrada"
+                    {% if tipo == "entrada" %}
+                        selected
+                    {% endif %}
+                >
+                    Entradas
+                </option>
+
+                <option
+                    value="salida"
+                    {% if tipo == "salida" %}
+                        selected
+                    {% endif %}
+                >
+                    Salidas
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="desde">
+                Desde
+            </label>
+
+            <input
+                type="date"
+                name="desde"
+                id="desde"
+                class="form-control"
+                value="{{ fecha_desde or '' }}"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="hasta">
+                Hasta
+            </label>
+
+            <input
+                type="date"
+                name="hasta"
+                id="hasta"
+                class="form-control"
+                value="{{ fecha_hasta or '' }}"
+            >
+
+        </div>
+
+
+        <div class="filter-action">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Filtrar
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+</div>
+
+<div class="history-card">
+
+
+<div class="card-header">
+
+    <div class="card-title">
+        Movimientos de inventario
+    </div>
+
+    <div class="movement-count">
+        {{ movimientos|length }} registros
+    </div>
+
+</div>
+
+
+{% if movimientos %}
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                    <th>
+                        Producto
+                    </th>
+
+                    <th>
+                        Tipo
+                    </th>
+
+                    <th>
+                        Cantidad
+                    </th>
+
+                    <th>
+                        Stock
+                    </th>
+
+                    <th>
+                        Usuario
+                    </th>
+
+                    <th>
+                        Motivo
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for movimiento in movimientos %}
+
+                    <tr>
+
+                        <td class="date-cell">
+
+                            {% if movimiento.fecha %}
+
+                                {{ movimiento.fecha.strftime("%d/%m/%Y %H:%M") }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="product-name">
+
+                                {% if movimiento.producto %}
+
+                                    {{ movimiento.producto.nombre }}
+
+                                {% else %}
+
+                                    Producto eliminado
+
+                                {% endif %}
+
+                            </div>
+
+                            {% if movimiento.producto %}
+
+                                <div class="product-code">
+
+                                    Código:
+                                    {{ movimiento.producto.codigo }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if movimiento.tipo == "entrada" %}
+
+                                <span class="badge badge-entrada">
+                                    ↑ Entrada
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-salida">
+                                    ↓ Salida
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if movimiento.tipo == "entrada" %}
+
+                                <span class="quantity-entrada">
+                                    +{{ movimiento.cantidad }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="quantity-salida">
+                                    -{{ movimiento.cantidad }}
+                                </span>
+
+                            {% endif %}
+
+                            unidades
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="stock-flow">
+
+                                <span class="stock-before">
+                                    {{ movimiento.stock_anterior }}
+                                </span>
+
+                                <span class="stock-arrow">
+                                    →
+                                </span>
+
+                                <span class="stock-after">
+                                    {{ movimiento.stock_nuevo }}
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="user-name">
+
+                                {% if movimiento.usuario %}
+
+                                    {{ movimiento.usuario.nombre }}
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="reason">
+
+                                {{ movimiento.motivo or "Sin motivo especificado" }}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+{% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            📦
+        </div>
+
+        <h3>
+            No hay movimientos
+        </h3>
+
+        <p>
+            No se encontraron movimientos de inventario
+            con los filtros seleccionados.
+        </p>
+
+        <a
+            href="{{ url_for('inventario.entrada') }}"
+            class="btn btn-primary"
+        >
+            Registrar primera entrada
+        </a>
+
+    </div>
+
+{% endif %}
+
+
+</div>
+
+{% endblock %}
