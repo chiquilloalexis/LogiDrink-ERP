@@ -1,427 +1,538 @@
 {% extends "base.html" %}
 
 {% block title %}
-Factura {{ venta.id }} | LogiDrink ERP
+Factura #{{ venta.id }} | LogiDrink ERP
+{% endblock %}
+
+{% block page_title %}
+Factura #{{ venta.id }}
 {% endblock %}
 
 {% block extra_css %}
 
-<!-- Fuente para las facturas térmicas -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
->
-
 <style>
 
-    /* =========================================================
-       ESTILOS GENERALES
-    ========================================================= */
+/* ==========================================================
+   CONFIGURACIÓN GENERAL
+   ========================================================== */
 
-    .factura-container {
-        width: 100%;
+.factura-container {
+    width: 100%;
+}
+
+.factura-documento {
+    background: #ffffff;
+    margin: 0 auto;
+    padding: 35px;
+    max-width: 900px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ==========================================================
+   ENCABEZADO A4
+   ========================================================== */
+
+.factura-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.factura-logo {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.factura-empresa {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.factura-dato {
+    font-size: 14px;
+    margin: 3px 0;
+}
+
+.factura-titulo {
+    margin-top: 25px;
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.factura-numero {
+    margin-top: 8px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* ==========================================================
+   INFORMACIÓN
+   ========================================================== */
+
+.factura-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 25px 0;
+}
+
+.info-box {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.info-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 4px 0;
+    font-size: 14px;
+}
+
+.info-label {
+    font-weight: 700;
+}
+
+/* ==========================================================
+   TABLA A4
+   ========================================================== */
+
+.factura-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.factura-tabla th,
+.factura-tabla td {
+    border: 1px solid #d1d5db;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.factura-tabla th {
+    background: #f3f4f6;
+    font-weight: 700;
+    text-align: center;
+}
+
+.factura-tabla td {
+    text-align: center;
+}
+
+.factura-tabla td:first-child {
+    text-align: left;
+}
+
+/* ==========================================================
+   TOTALES A4
+   ========================================================== */
+
+.totales {
+    width: 320px;
+    margin-left: auto;
+    margin-top: 25px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 15px;
+}
+
+.total-final {
+    border-top: 2px solid #111827;
+    margin-top: 5px;
+    padding-top: 10px;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* ==========================================================
+   AGRADECIMIENTO
+   ========================================================== */
+
+.factura-gracias {
+    text-align: center;
+    margin-top: 45px;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+/* ==========================================================
+   BOTONES
+   ========================================================== */
+
+.factura-controles {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.factura-controles button,
+.factura-controles a {
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-58 {
+    background: #374151;
+    color: white;
+}
+
+.btn-80 {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-a4 {
+    background: #059669;
+    color: white;
+}
+
+.btn-volver {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-anular {
+    background: #dc2626;
+    color: white;
+}
+
+/* ==========================================================
+   FORMATO TÉRMICO
+   ========================================================== */
+
+.thermal-mode {
+    font-family: "Courier New", Courier, monospace !important;
+    background: white !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.thermal-mode * {
+    font-family: "Courier New", Courier, monospace !important;
+}
+
+/* Encabezado térmico */
+
+.thermal-mode .factura-header {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.thermal-mode .factura-logo {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 3px;
+}
+
+.thermal-mode .factura-empresa {
+    font-size: 15px;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.thermal-mode .factura-dato {
+    font-size: 12px;
+    margin: 1px 0;
+}
+
+.thermal-mode .factura-titulo {
+    font-size: 15px;
+    font-weight: 900;
+    margin-top: 12px;
+}
+
+.thermal-mode .factura-numero {
+    font-size: 14px;
+    font-weight: 900;
+    margin-top: 3px;
+}
+
+/* Líneas separadoras */
+
+.thermal-separador {
+    display: none;
+}
+
+.thermal-mode .thermal-separador {
+    display: block;
+    width: 100%;
+    border-top: 1px dashed #000;
+    margin: 10px 0;
+}
+
+/* Información */
+
+.thermal-mode .factura-info {
+    display: block;
+    margin: 0;
+}
+
+.thermal-mode .info-box {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.thermal-mode .info-title {
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.thermal-mode .info-row {
+    display: block;
+    padding: 1px 0;
+    font-size: 12px;
+}
+
+.thermal-mode .info-label {
+    font-weight: 900;
+}
+
+/* Tabla térmica */
+
+.thermal-mode .factura-tabla {
+    display: none;
+}
+
+.thermal-productos {
+    display: none;
+}
+
+.thermal-mode .thermal-productos {
+    display: block;
+}
+
+.thermal-producto {
+    margin-bottom: 10px;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.thermal-producto-nombre {
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.thermal-linea {
+    display: block;
+}
+
+.thermal-label {
+    font-weight: 900;
+}
+
+/* Totales térmicos */
+
+.thermal-mode .totales {
+    width: 100%;
+    margin: 0;
+}
+
+.thermal-mode .total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    font-size: 12px;
+}
+
+.thermal-mode .total-final {
+    border-top: 1px solid #000;
+    margin-top: 5px;
+    padding-top: 5px;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+/* Gracias */
+
+.thermal-mode .factura-gracias {
+    margin-top: 15px;
+    font-size: 13px;
+    font-weight: 900;
+    text-align: center;
+}
+
+/* ==========================================================
+   80 MM
+   ========================================================== */
+
+.factura-documento.formato-80 {
+    width: 80mm;
+    max-width: 80mm;
+    padding: 5mm;
+    margin: 0 auto;
+}
+
+/* ==========================================================
+   58 MM
+   ========================================================== */
+
+.factura-documento.formato-58 {
+    width: 58mm;
+    max-width: 58mm;
+    padding: 3mm;
+    margin: 0 auto;
+}
+
+.formato-58 .factura-logo {
+    font-size: 17px;
+}
+
+.formato-58 .factura-empresa {
+    font-size: 13px;
+}
+
+.formato-58 .factura-dato {
+    font-size: 10px;
+}
+
+.formato-58 .factura-titulo {
+    font-size: 13px;
+}
+
+.formato-58 .factura-numero {
+    font-size: 12px;
+}
+
+.formato-58 .info-title {
+    font-size: 11px;
+}
+
+.formato-58 .info-row,
+.formato-58 .thermal-producto,
+.formato-58 .total-row {
+    font-size: 10px;
+}
+
+.formato-58 .total-final {
+    font-size: 13px;
+}
+
+.formato-58 .factura-gracias {
+    font-size: 11px;
+}
+
+/* ==========================================================
+   RESPONSIVE PANTALLA
+   ========================================================== */
+
+@media screen and (max-width: 600px) {
+
+    .factura-controles {
+        gap: 6px;
     }
 
-    .acciones-factura {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .acciones-factura button,
-    .acciones-factura a {
-        border: none;
-        border-radius: 8px;
-        padding: 10px 16px;
-        cursor: pointer;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    .btn-a4 {
-        background: #212529;
-        color: white;
-    }
-
-    .btn-80 {
-        background: #0d6efd;
-        color: white;
-    }
-
-    .btn-58 {
-        background: #198754;
-        color: white;
-    }
-
-    .btn-volver {
-        background: #6c757d;
-        color: white;
-    }
-
-    .btn-anular {
-        background: #dc3545;
-        color: white;
-    }
-
-    /* =========================================================
-       FACTURA A4
-       SE MANTIENE COMO FACTURA NORMAL
-    ========================================================= */
-
-    .factura-a4 {
-        background: white;
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 35px;
-        box-shadow: 0 2px 12px rgba(0,0,0,.10);
-        color: #212529;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .a4-empresa {
-        text-align: center;
-        margin-bottom: 25px;
-    }
-
-    .a4-empresa h1 {
-        margin: 0 0 5px;
-        font-size: 28px;
-        font-weight: 700;
-    }
-
-    .a4-empresa p {
-        margin: 3px 0;
-        font-size: 14px;
-    }
-
-    .a4-titulo {
-        text-align: center;
-        margin: 25px 0;
-    }
-
-    .a4-titulo h2 {
-        margin: 0;
-        font-size: 24px;
-    }
-
-    .a4-numero {
-        font-size: 18px;
-        font-weight: bold;
-        margin-top: 8px;
-    }
-
-    .a4-info {
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        padding: 18px;
-        margin-bottom: 20px;
-    }
-
-    .a4-info h3 {
-        margin-top: 0;
-        margin-bottom: 15px;
-        font-size: 18px;
-    }
-
-    .a4-info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px 25px;
-    }
-
-    .a4-info-item {
-        font-size: 14px;
-    }
-
-    .a4-info-item strong {
-        font-weight: 700;
-    }
-
-    .a4-cliente {
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        padding: 18px;
-        margin-bottom: 20px;
-    }
-
-    .a4-cliente h3 {
-        margin-top: 0;
-        margin-bottom: 10px;
-        font-size: 18px;
-    }
-
-    .a4-tabla {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-
-    .a4-tabla th,
-    .a4-tabla td {
-        border: 1px solid #dee2e6;
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .a4-tabla th {
-        background: #f8f9fa;
-        font-weight: 700;
-        text-align: left;
-    }
-
-    .a4-tabla .numero {
-        text-align: right;
-    }
-
-    .a4-totales {
-        width: 320px;
-        margin-left: auto;
-        margin-top: 20px;
-    }
-
-    .a4-total-linea {
-        display: flex;
-        justify-content: space-between;
-        padding: 6px 0;
-        font-size: 15px;
-    }
-
-    .a4-total-final {
-        border-top: 2px solid #212529;
-        margin-top: 8px;
-        padding-top: 10px;
-        font-size: 20px;
-        font-weight: 700;
-    }
-
-    .a4-gracias {
-        text-align: center;
-        margin-top: 35px;
-        font-size: 15px;
-        font-weight: 600;
-    }
-
-
-    /* =========================================================
-       FACTURA TÉRMICA
-       ROBOTO MONO
-    ========================================================= */
-
-    .factura-termica {
-        display: none;
-        background: white;
-        color: #000;
-        font-family: "Roboto Mono", monospace;
-        font-weight: 500;
-        line-height: 1.35;
-        margin: 0 auto;
-    }
-
-    /*
-       80mm
-       El ancho real de impresión suele ser menor que 80mm,
-       por eso dejamos espacio interno.
-    */
-
-    .termica-80 {
-        width: 80mm;
-        max-width: 80mm;
-        padding: 3mm;
-        font-size: 11px;
-    }
-
-    /*
-       58mm
-    */
-
-    .termica-58 {
-        width: 58mm;
-        max-width: 58mm;
-        padding: 2mm;
-        font-size: 9px;
-    }
-
-    .termica-encabezado {
-        text-align: center;
-    }
-
-    .termica-logo {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 4px;
-        letter-spacing: 1px;
-    }
-
-    .termica-empresa {
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 5px;
-    }
-
-    .termica-dato {
-        margin: 2px 0;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
-
-    .termica-separador {
-        border-top: 1px dashed #000;
-        margin: 9px 0;
-        height: 1px;
-    }
-
-    .termica-separador-doble {
-        border-top: 2px solid #000;
-        margin: 9px 0;
-        height: 1px;
-    }
-
-    .termica-titulo {
-        text-align: center;
-        font-weight: 700;
-        font-size: 13px;
-        margin: 7px 0;
-    }
-
-    .termica-numero {
-        text-align: center;
+    .factura-controles button,
+    .factura-controles a {
+        padding: 8px 10px;
         font-size: 12px;
-        font-weight: 700;
     }
 
-    .termica-seccion {
-        font-weight: 700;
-        margin-top: 7px;
-        margin-bottom: 3px;
+    .factura-documento:not(.thermal-mode) {
+        padding: 15px;
+        box-shadow: none;
     }
 
-    .termica-producto {
-        margin-bottom: 12px;
+    .factura-info {
+        grid-template-columns: 1fr;
     }
 
-    .termica-producto-nombre {
-        font-weight: 700;
-        text-transform: uppercase;
-        overflow-wrap: anywhere;
-        word-break: break-word;
+}
+
+/* ==========================================================
+   IMPRESIÓN A4
+   ========================================================== */
+
+@media print {
+
+    body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    .termica-linea {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        margin: 2px 0;
+    body * {
+        visibility: hidden;
     }
 
-    .termica-linea .valor {
-        text-align: right;
-        flex-shrink: 0;
+    #factura-imprimir,
+    #factura-imprimir * {
+        visibility: visible;
     }
 
-    .termica-subtotal-producto {
-        font-weight: 700;
-        margin-top: 3px;
+    #factura-imprimir {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        box-shadow: none !important;
     }
 
-    .termica-totales {
-        margin-top: 8px;
+    .factura-controles,
+    nav,
+    header,
+    aside,
+    .sidebar {
+        display: none !important;
     }
 
-    .termica-total {
-        font-size: 14px;
-        font-weight: 700;
-        margin-top: 4px;
+    /* A4 */
+
+    #factura-imprimir.formato-a4 {
+        width: 210mm !important;
+        max-width: 210mm !important;
+        min-height: 297mm;
+        padding: 20mm !important;
     }
 
-    .termica-gracias {
-        text-align: center;
-        font-weight: 700;
-        margin-top: 12px;
-        margin-bottom: 5px;
+    /* 80mm */
+
+    #factura-imprimir.formato-80 {
+        width: 80mm !important;
+        max-width: 80mm !important;
+        padding: 5mm !important;
     }
 
-    .termica-estado {
-        text-align: center;
-        font-weight: 700;
-        margin-top: 5px;
+    /* 58mm */
+
+    #factura-imprimir.formato-58 {
+        width: 58mm !important;
+        max-width: 58mm !important;
+        padding: 3mm !important;
     }
 
-    /* =========================================================
-       IMPRESIÓN
-    ========================================================= */
-
-    @media print {
-
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: white !important;
-        }
-
-        body * {
-            visibility: hidden;
-        }
-
-        .factura-a4,
-        .factura-a4 * {
-            visibility: visible;
-        }
-
-        .factura-a4 {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            max-width: none;
-            margin: 0;
-            padding: 20px;
-            box-shadow: none;
-        }
-
-        .factura-termica,
-        .factura-termica * {
-            visibility: hidden;
-        }
-
-        .acciones-factura {
-            display: none !important;
-        }
+    @page {
+        size: auto;
+        margin: 0;
     }
 
-    /* =========================================================
-       MÓVIL
-       EL A4 PUEDE DESPLAZARSE HORIZONTALMENTE
-       SIN ALTERAR SU DISEÑO
-    ========================================================= */
-
-    @media screen and (max-width: 768px) {
-
-        .factura-a4 {
-            padding: 20px;
-        }
-
-        .a4-info-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .a4-totales {
-            width: 100%;
-        }
-
-        .acciones-factura {
-            flex-direction: column;
-        }
-
-        .acciones-factura button,
-        .acciones-factura a {
-            width: 100%;
-        }
-    }
+}
 
 </style>
 
@@ -433,10 +544,34 @@ Factura {{ venta.id }} | LogiDrink ERP
 <div class="factura-container">
 
     <!-- =====================================================
-         BOTONES
-    ====================================================== -->
+         CONTROLES
+         ===================================================== -->
 
-    <div class="acciones-factura">
+    <div class="factura-controles">
+
+        <button
+            type="button"
+            class="btn-58"
+            onclick="imprimirFactura('58')"
+        >
+            🖨️ 58 mm
+        </button>
+
+        <button
+            type="button"
+            class="btn-80"
+            onclick="imprimirFactura('80')"
+        >
+            🖨️ 80 mm
+        </button>
+
+        <button
+            type="button"
+            class="btn-a4"
+            onclick="imprimirFactura('a4')"
+        >
+            🖨️ A4
+        </button>
 
         <a
             href="{{ url_for('facturacion.index') }}"
@@ -445,191 +580,239 @@ Factura {{ venta.id }} | LogiDrink ERP
             ← Volver
         </a>
 
-        <button
-            type="button"
-            class="btn-a4"
-            onclick="imprimirFactura('a4')"
-        >
-            🖨️ Imprimir A4
-        </button>
+        {% if venta.estado != "anulada" %}
 
-        <button
-            type="button"
-            class="btn-80"
-            onclick="imprimirFactura('80')"
-        >
-            🧾 Imprimir 80mm
-        </button>
-
-        <button
-            type="button"
-            class="btn-58"
-            onclick="imprimirFactura('58')"
-        >
-            🧾 Imprimir 58mm
-        </button>
-
-        {% if venta.estado != 'anulada' %}
         <button
             type="button"
             class="btn-anular"
-            onclick="anularFactura()"
+            onclick="confirmarAnulacion()"
         >
             Anular factura
         </button>
+
         {% endif %}
 
     </div>
 
 
     <!-- =====================================================
-         FACTURA A4
-         ESTE ES EL DISEÑO NORMAL
-    ====================================================== -->
+         FACTURA
+         ===================================================== -->
 
     <div
-        id="facturaA4"
-        class="factura-a4"
+        id="factura-imprimir"
+        class="factura-documento formato-a4"
     >
 
-        <!-- EMPRESA -->
+        <!-- =================================================
+             ENCABEZADO
+             ================================================= -->
 
-        <div class="a4-empresa">
+        <div class="factura-header">
 
-            <h1>
+            <div class="factura-logo">
+                LOGIDRINK
+            </div>
+
+            <div class="factura-empresa">
                 {{ empresa.nombre }}
-            </h1>
+            </div>
 
             {% if empresa.nit %}
-            <p>
-                <strong>NIT:</strong>
-                {{ empresa.nit }}
-            </p>
+            <div class="factura-dato">
+                NIT: {{ empresa.nit }}
+            </div>
             {% endif %}
 
             {% if empresa.direccion %}
-            <p>
-                Dirección:
-                {{ empresa.direccion }}
-            </p>
+            <div class="factura-dato">
+                Dirección: {{ empresa.direccion }}
+            </div>
             {% endif %}
 
             {% if empresa.telefono %}
-            <p>
-                Teléfono:
-                {{ empresa.telefono }}
-            </p>
+            <div class="factura-dato">
+                Teléfono: {{ empresa.telefono }}
+            </div>
             {% endif %}
 
             {% if empresa.email %}
-            <p>
-                Email:
-                {{ empresa.email }}
-            </p>
+            <div class="factura-dato">
+                Email: {{ empresa.email }}
+            </div>
             {% endif %}
 
-        </div>
-
-
-        <!-- TITULO -->
-
-        <div class="a4-titulo">
-
-            <h2>
+            <div class="factura-titulo">
                 FACTURA DE VENTA
-            </h2>
+            </div>
 
-            <div class="a4-numero">
+            <div class="factura-numero">
                 FACTURA {{ "%06d"|format(venta.id) }}
             </div>
 
         </div>
 
 
-        <!-- INFORMACIÓN DE FACTURA -->
+        <!-- =================================================
+             SEPARADOR
+             ================================================= -->
 
-        <div class="a4-info">
+        <div class="thermal-separador"></div>
 
-            <h3>
-                Información de factura
-            </h3>
 
-            <div class="a4-info-grid">
+        <!-- =================================================
+             INFORMACIÓN DE FACTURA
+             ================================================= -->
 
-                <div class="a4-info-item">
-                    <strong>Fecha de expedición:</strong>
-                    {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}
+        <div class="factura-info">
+
+            <div class="info-box">
+
+                <div class="info-title">
+                    Información de factura
                 </div>
 
-                <div class="a4-info-item">
-                    <strong>Forma de pago:</strong>
-                    {{ venta.metodo_pago|capitalize }}
+                <div class="info-row">
+
+                    <span class="info-label">
+                        Fecha de expedición:
+                    </span>
+
+                    <span>
+                        {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}
+                    </span>
+
                 </div>
 
-                <div class="a4-info-item">
-                    <strong>Estado:</strong>
-                    {{ venta.estado|upper }}
+                <div class="info-row">
+
+                    <span class="info-label">
+                        Forma de pago:
+                    </span>
+
+                    <span>
+                        {{ venta.metodo_pago|capitalize }}
+                    </span>
+
                 </div>
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        Estado:
+                    </span>
+
+                    <span>
+                        {{ venta.estado|upper }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-title">
+                    Cliente
+                </div>
+
+                {% if venta.cliente %}
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Nombre:
+                        </span>
+
+                        <span>
+                            {{ venta.cliente.nombre }}
+                        </span>
+
+                    </div>
+
+                    {% if venta.cliente.documento %}
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            CC:
+                        </span>
+
+                        <span>
+                            {{ venta.cliente.documento }}
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+                    {% if venta.cliente.direccion %}
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Dirección:
+                        </span>
+
+                        <span>
+                            {{ venta.cliente.direccion }}
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+                    {% if venta.cliente.telefono %}
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Teléfono:
+                        </span>
+
+                        <span>
+                            {{ venta.cliente.telefono }}
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <div class="info-row">
+
+                        <span>
+                            Consumidor final
+                        </span>
+
+                    </div>
+
+                {% endif %}
 
             </div>
 
         </div>
 
 
-        <!-- CLIENTE -->
+        <!-- =================================================
+             SEPARADOR
+             ================================================= -->
 
-        <div class="a4-cliente">
-
-            <h3>
-                Cliente
-            </h3>
-
-            {% if venta.cliente %}
-
-                <div>
-                    <strong>
-                        {{ venta.cliente.nombre }}
-                    </strong>
-                </div>
-
-                {% if venta.cliente.documento %}
-                <div>
-                    Documento:
-                    {{ venta.cliente.documento }}
-                </div>
-                {% endif %}
-
-                {% if venta.cliente.direccion %}
-                <div>
-                    Dirección:
-                    {{ venta.cliente.direccion }}
-                </div>
-                {% endif %}
-
-                {% if venta.cliente.telefono %}
-                <div>
-                    Teléfono:
-                    {{ venta.cliente.telefono }}
-                </div>
-                {% endif %}
-
-            {% else %}
-
-                <div>
-                    Consumidor final
-                </div>
-
-            {% endif %}
-
-        </div>
+        <div class="thermal-separador"></div>
 
 
-        <!-- PRODUCTOS -->
+        <!-- =================================================
+             TABLA A4
+             ================================================= -->
 
-        <table class="a4-tabla">
+        <table class="factura-tabla">
 
             <thead>
+
                 <tr>
+
                     <th>
                         Producto
                     </th>
@@ -649,7 +832,9 @@ Factura {{ venta.id }} | LogiDrink ERP
                     <th>
                         Total
                     </th>
+
                 </tr>
+
             </thead>
 
             <tbody>
@@ -668,15 +853,15 @@ Factura {{ venta.id }} | LogiDrink ERP
                             CAJA
                         </td>
 
-                        <td class="numero">
+                        <td>
                             {{ item.cajas }}
                         </td>
 
-                        <td class="numero">
+                        <td>
                             ${{ "{:,.0f}".format(item.precio_caja|float).replace(",", ".") }}
                         </td>
 
-                        <td class="numero">
+                        <td>
                             ${{ "{:,.0f}".format((item.cajas * item.precio_caja)|float).replace(",", ".") }}
                         </td>
 
@@ -697,15 +882,15 @@ Factura {{ venta.id }} | LogiDrink ERP
                             UNIDAD
                         </td>
 
-                        <td class="numero">
+                        <td>
                             {{ item.unidades }}
                         </td>
 
-                        <td class="numero">
+                        <td>
                             ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
                         </td>
 
-                        <td class="numero">
+                        <td>
                             ${{ "{:,.0f}".format((item.unidades * item.precio_unidad)|float).replace(",", ".") }}
                         </td>
 
@@ -720,14 +905,156 @@ Factura {{ venta.id }} | LogiDrink ERP
         </table>
 
 
-        <!-- TOTALES -->
+        <!-- =================================================
+             PRODUCTOS FORMATO TÉRMICO
+             ================================================= -->
 
-        <div class="a4-totales">
+        <div class="thermal-productos">
 
-            <div class="a4-total-linea">
+            {% for item in productos_factura %}
+
+                <div class="thermal-producto">
+
+                    <div class="thermal-producto-nombre">
+
+                        PRODUCTO:
+                        {{ item.producto.nombre }}
+
+                    </div>
+
+
+                    {% if item.cajas > 0 %}
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            TIPO:
+                        </span>
+
+                        CAJA
+
+                    </div>
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            CANTIDAD:
+                        </span>
+
+                        {{ item.cajas }} CAJAS
+
+                    </div>
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            UNIDADES/CAJA:
+                        </span>
+
+                        {{ item.producto.unidades_por_caja }}
+
+                    </div>
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            PRECIO CAJA:
+                        </span>
+
+                        ${{ "{:,.0f}".format(item.precio_caja|float).replace(",", ".") }}
+
+                    </div>
+
+                    {% if item.precio_unidad > 0 %}
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            PRECIO UNIDAD:
+                        </span>
+
+                        ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
+
+                    </div>
+
+                    {% endif %}
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            SUBTOTAL:
+                        </span>
+
+                        ${{ "{:,.0f}".format((item.cajas * item.precio_caja)|float).replace(",", ".") }}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    {% if item.unidades > 0 %}
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            TIPO:
+                        </span>
+
+                        UNIDAD
+
+                    </div>
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            CANTIDAD:
+                        </span>
+
+                        {{ item.unidades }} UNIDADES
+
+                    </div>
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            PRECIO UNIDAD:
+                        </span>
+
+                        ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
+
+                    </div>
+
+                    <div class="thermal-linea">
+
+                        <span class="thermal-label">
+                            SUBTOTAL:
+                        </span>
+
+                        ${{ "{:,.0f}".format((item.unidades * item.precio_unidad)|float).replace(",", ".") }}
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="thermal-separador"></div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- =================================================
+             TOTALES
+             ================================================= -->
+
+        <div class="totales">
+
+            <div class="total-row">
 
                 <span>
-                    Subtotal
+                    SUBTOTAL:
                 </span>
 
                 <strong>
@@ -736,10 +1063,11 @@ Factura {{ venta.id }} | LogiDrink ERP
 
             </div>
 
-            <div class="a4-total-linea">
+
+            <div class="total-row">
 
                 <span>
-                    Descuento
+                    DESCUENTO:
                 </span>
 
                 <strong>
@@ -748,538 +1076,30 @@ Factura {{ venta.id }} | LogiDrink ERP
 
             </div>
 
-            <div class="a4-total-linea a4-total-final">
 
-                <span>
-                    TOTAL
-                </span>
-
-                <strong>
-                    ${{ "{:,.0f}".format(venta.total|float).replace(",", ".") }}
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="a4-gracias">
-            Gracias por su compra
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         FACTURA TÉRMICA 80MM
-    ====================================================== -->
-
-    <div
-        id="factura80"
-        class="factura-termica termica-80"
-    >
-
-        <div class="termica-encabezado">
-
-            <div class="termica-logo">
-                LOGIDRINK
-            </div>
-
-            <div class="termica-empresa">
-                {{ empresa.nombre }}
-            </div>
-
-            {% if empresa.nit %}
-            <div class="termica-dato">
-                NIT: {{ empresa.nit }}
-            </div>
-            {% endif %}
-
-            {% if empresa.direccion %}
-            <div class="termica-dato">
-                Dirección: {{ empresa.direccion }}
-            </div>
-            {% endif %}
-
-            {% if empresa.telefono %}
-            <div class="termica-dato">
-                Teléfono: {{ empresa.telefono }}
-            </div>
-            {% endif %}
-
-            {% if empresa.email %}
-            <div class="termica-dato">
-                Email: {{ empresa.email }}
-            </div>
-            {% endif %}
-
-        </div>
-
-
-        <div class="termica-separador"></div>
-
-
-        <div class="termica-titulo">
-            FACTURA DE VENTA
-        </div>
-
-        <div class="termica-numero">
-            FACTURA {{ "%06d"|format(venta.id) }}
-        </div>
-
-
-        <div class="termica-separador"></div>
-
-
-        <div class="termica-seccion">
-            INFORMACIÓN DE FACTURA
-        </div>
-
-        <div class="termica-dato">
-            Fecha de expedición:
-            {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}
-        </div>
-
-        <div class="termica-dato">
-            Forma de pago:
-            {{ venta.metodo_pago|capitalize }}
-        </div>
-
-        <div class="termica-dato">
-            Estado:
-            {{ venta.estado|upper }}
-        </div>
-
-
-        <div class="termica-separador"></div>
-
-
-        <div class="termica-seccion">
-            CLIENTE
-        </div>
-
-        {% if venta.cliente %}
-
-            <div class="termica-dato">
-                {{ venta.cliente.nombre }}
-            </div>
-
-            {% if venta.cliente.documento %}
-            <div class="termica-dato">
-                Documento: {{ venta.cliente.documento }}
-            </div>
-            {% endif %}
-
-            {% if venta.cliente.direccion %}
-            <div class="termica-dato">
-                Dirección: {{ venta.cliente.direccion }}
-            </div>
-            {% endif %}
-
-            {% if venta.cliente.telefono %}
-            <div class="termica-dato">
-                Teléfono: {{ venta.cliente.telefono }}
-            </div>
-            {% endif %}
-
-        {% else %}
-
-            <div class="termica-dato">
-                Consumidor final
-            </div>
-
-        {% endif %}
-
-
-        <div class="termica-separador"></div>
-
-
-        <!-- PRODUCTOS -->
-
-        {% for item in productos_factura %}
-
-            {% if item.cajas > 0 %}
-
-            <div class="termica-producto">
-
-                <div class="termica-producto-nombre">
-                    PRODUCTO:
-                    {{ item.producto.nombre }}
-                </div>
-
-                <div class="termica-dato">
-                    TIPO: CAJA
-                </div>
-
-                <div class="termica-dato">
-                    CANTIDAD:
-                    {{ item.cajas }} CAJAS
-                </div>
-
-                {% if item.producto.unidades_por_caja %}
-                <div class="termica-dato">
-                    UNIDADES/CAJA:
-                    {{ item.producto.unidades_por_caja }}
-                </div>
-                {% endif %}
-
-                <div class="termica-dato">
-                    PRECIO CAJA:
-                    ${{ "{:,.0f}".format(item.precio_caja|float).replace(",", ".") }}
-                </div>
-
-                {% if item.precio_unidad %}
-                <div class="termica-dato">
-                    PRECIO UNIDAD:
-                    ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
-                </div>
-                {% endif %}
-
-                <div class="termica-subtotal-producto">
-                    SUBTOTAL:
-                    ${{ "{:,.0f}".format((item.cajas * item.precio_caja)|float).replace(",", ".") }}
-                </div>
-
-            </div>
-
-            {% endif %}
-
-
-            {% if item.unidades > 0 %}
-
-            <div class="termica-producto">
-
-                <div class="termica-producto-nombre">
-                    PRODUCTO:
-                    {{ item.producto.nombre }}
-                </div>
-
-                <div class="termica-dato">
-                    TIPO: UNIDAD
-                </div>
-
-                <div class="termica-dato">
-                    CANTIDAD:
-                    {{ item.unidades }} UNIDADES
-                </div>
-
-                <div class="termica-dato">
-                    PRECIO UNIDAD:
-                    ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
-                </div>
-
-                <div class="termica-subtotal-producto">
-                    SUBTOTAL:
-                    ${{ "{:,.0f}".format((item.unidades * item.precio_unidad)|float).replace(",", ".") }}
-                </div>
-
-            </div>
-
-            {% endif %}
-
-            {% if not loop.last %}
-            <div class="termica-separador"></div>
-            {% endif %}
-
-        {% endfor %}
-
-
-        <div class="termica-separador-doble"></div>
-
-
-        <!-- TOTALES -->
-
-        <div class="termica-totales">
-
-            <div class="termica-linea">
-                <span>SUBTOTAL:</span>
-
-                <span class="valor">
-                    ${{ "{:,.0f}".format(venta.subtotal|float).replace(",", ".") }}
-                </span>
-            </div>
-
-            <div class="termica-linea">
-                <span>DESCUENTO:</span>
-
-                <span class="valor">
-                    ${{ "{:,.0f}".format(venta.descuento|float).replace(",", ".") }}
-                </span>
-            </div>
-
-            <div class="termica-separador"></div>
-
-            <div class="termica-linea termica-total">
+            <div class="total-row total-final">
 
                 <span>
                     TOTAL:
                 </span>
 
-                <span class="valor">
+                <strong>
                     ${{ "{:,.0f}".format(venta.total|float).replace(",", ".") }}
-                </span>
+                </strong>
 
             </div>
 
         </div>
 
 
-        <div class="termica-separador-doble"></div>
+        <!-- =================================================
+             GRACIAS
+             ================================================= -->
 
+        <div class="factura-gracias">
 
-        <div class="termica-gracias">
             GRACIAS POR SU COMPRA
-        </div>
 
-    </div>
-
-
-    <!-- =====================================================
-         FACTURA TÉRMICA 58MM
-    ====================================================== -->
-
-    <div
-        id="factura58"
-        class="factura-termica termica-58"
-    >
-
-        <div class="termica-encabezado">
-
-            <div class="termica-logo">
-                LOGIDRINK
-            </div>
-
-            <div class="termica-empresa">
-                {{ empresa.nombre }}
-            </div>
-
-            {% if empresa.nit %}
-            <div class="termica-dato">
-                NIT: {{ empresa.nit }}
-            </div>
-            {% endif %}
-
-            {% if empresa.direccion %}
-            <div class="termica-dato">
-                Dirección: {{ empresa.direccion }}
-            </div>
-            {% endif %}
-
-            {% if empresa.telefono %}
-            <div class="termica-dato">
-                Teléfono: {{ empresa.telefono }}
-            </div>
-            {% endif %}
-
-            {% if empresa.email %}
-            <div class="termica-dato">
-                Email: {{ empresa.email }}
-            </div>
-            {% endif %}
-
-        </div>
-
-
-        <div class="termica-separador"></div>
-
-
-        <div class="termica-titulo">
-            FACTURA DE VENTA
-        </div>
-
-        <div class="termica-numero">
-            FACTURA {{ "%06d"|format(venta.id) }}
-        </div>
-
-
-        <div class="termica-separador"></div>
-
-
-        <div class="termica-seccion">
-            INFORMACIÓN DE FACTURA
-        </div>
-
-        <div class="termica-dato">
-            Fecha:
-            {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }}
-        </div>
-
-        <div class="termica-dato">
-            Pago:
-            {{ venta.metodo_pago|capitalize }}
-        </div>
-
-        <div class="termica-dato">
-            Estado:
-            {{ venta.estado|upper }}
-        </div>
-
-
-        <div class="termica-separador"></div>
-
-
-        <div class="termica-seccion">
-            CLIENTE
-        </div>
-
-        {% if venta.cliente %}
-
-            <div class="termica-dato">
-                {{ venta.cliente.nombre }}
-            </div>
-
-            {% if venta.cliente.documento %}
-            <div class="termica-dato">
-                CC: {{ venta.cliente.documento }}
-            </div>
-            {% endif %}
-
-            {% if venta.cliente.telefono %}
-            <div class="termica-dato">
-                Tel: {{ venta.cliente.telefono }}
-            </div>
-            {% endif %}
-
-        {% else %}
-
-            <div class="termica-dato">
-                Consumidor final
-            </div>
-
-        {% endif %}
-
-
-        <div class="termica-separador"></div>
-
-
-        <!-- PRODUCTOS -->
-
-        {% for item in productos_factura %}
-
-            {% if item.cajas > 0 %}
-
-            <div class="termica-producto">
-
-                <div class="termica-producto-nombre">
-                    PRODUCTO:
-                    {{ item.producto.nombre }}
-                </div>
-
-                <div class="termica-dato">
-                    TIPO: CAJA
-                </div>
-
-                <div class="termica-dato">
-                    CANTIDAD:
-                    {{ item.cajas }} CAJAS
-                </div>
-
-                {% if item.producto.unidades_por_caja %}
-                <div class="termica-dato">
-                    UNIDADES/CAJA:
-                    {{ item.producto.unidades_por_caja }}
-                </div>
-                {% endif %}
-
-                <div class="termica-dato">
-                    PRECIO CAJA:
-                    ${{ "{:,.0f}".format(item.precio_caja|float).replace(",", ".") }}
-                </div>
-
-                <div class="termica-subtotal-producto">
-                    SUBTOTAL:
-                    ${{ "{:,.0f}".format((item.cajas * item.precio_caja)|float).replace(",", ".") }}
-                </div>
-
-            </div>
-
-            {% endif %}
-
-
-            {% if item.unidades > 0 %}
-
-            <div class="termica-producto">
-
-                <div class="termica-producto-nombre">
-                    PRODUCTO:
-                    {{ item.producto.nombre }}
-                </div>
-
-                <div class="termica-dato">
-                    TIPO: UNIDAD
-                </div>
-
-                <div class="termica-dato">
-                    CANTIDAD:
-                    {{ item.unidades }} UNIDADES
-                </div>
-
-                <div class="termica-dato">
-                    PRECIO UNIDAD:
-                    ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
-                </div>
-
-                <div class="termica-subtotal-producto">
-                    SUBTOTAL:
-                    ${{ "{:,.0f".format((item.unidades * item.precio_unidad)|float).replace(",", ".") }}
-                </div>
-
-            </div>
-
-            {% endif %}
-
-            {% if not loop.last %}
-            <div class="termica-separador"></div>
-            {% endif %}
-
-        {% endfor %}
-
-
-        <div class="termica-separador-doble"></div>
-
-
-        <!-- TOTALES -->
-
-        <div class="termica-totales">
-
-            <div class="termica-linea">
-                <span>SUBTOTAL:</span>
-
-                <span class="valor">
-                    ${{ "{:,.0f}".format(venta.subtotal|float).replace(",", ".") }}
-                </span>
-            </div>
-
-            <div class="termica-linea">
-                <span>DESCUENTO:</span>
-
-                <span class="valor">
-                    ${{ "{:,.0f}".format(venta.descuento|float).replace(",", ".") }}
-                </span>
-            </div>
-
-            <div class="termica-separador"></div>
-
-            <div class="termica-linea termica-total">
-
-                <span>
-                    TOTAL:
-                </span>
-
-                <span class="valor">
-                    ${{ "{:,.0f}".format(venta.total|float).replace(",", ".") }}
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <div class="termica-separador-doble"></div>
-
-
-        <div class="termica-gracias">
-            GRACIAS POR SU COMPRA
         </div>
 
     </div>
@@ -1287,104 +1107,108 @@ Factura {{ venta.id }} | LogiDrink ERP
 </div>
 
 
-<!-- =========================================================
+<!-- ==========================================================
      JAVASCRIPT
-========================================================= -->
+     ========================================================== -->
 
 <script>
 
 function imprimirFactura(formato) {
 
-    /*
-     * Primero ocultamos cualquier factura térmica
-     */
+    const factura = document.getElementById("factura-imprimir");
 
-    document.getElementById("factura80").style.display = "none";
-    document.getElementById("factura58").style.display = "none";
+    if (!factura) {
+        return;
+    }
+
+    /*
+     * Quitar formatos anteriores
+     */
+    factura.classList.remove(
+        "thermal-mode",
+        "formato-58",
+        "formato-80",
+        "formato-a4"
+    );
+
 
     /*
      * A4
      */
-
     if (formato === "a4") {
 
-        document.getElementById("facturaA4").style.display = "block";
+        factura.classList.add("formato-a4");
 
-        window.print();
-
-        return;
     }
 
 
     /*
-     * 80mm
+     * 80 mm
      */
+    else if (formato === "80") {
 
-    if (formato === "80") {
+        factura.classList.add(
+            "thermal-mode",
+            "formato-80"
+        );
 
-        document.getElementById("facturaA4").style.display = "none";
-
-        const factura80 = document.getElementById("factura80");
-
-        factura80.style.display = "block";
-
-        window.print();
-
-        return;
     }
 
 
     /*
-     * 58mm
+     * 58 mm
      */
+    else if (formato === "58") {
 
-    if (formato === "58") {
+        factura.classList.add(
+            "thermal-mode",
+            "formato-58"
+        );
 
-        document.getElementById("facturaA4").style.display = "none";
+    }
 
-        const factura58 = document.getElementById("factura58");
 
-        factura58.style.display = "block";
+    /*
+     * Esperar a que el navegador aplique
+     * los estilos antes de imprimir.
+     */
+    setTimeout(function() {
 
         window.print();
 
-        return;
-    }
+    }, 150);
 
 }
 
 
-/*
- * Después de imprimir volvemos a mostrar el A4
- */
+/* ==========================================================
+   CONFIRMAR ANULACIÓN
+   ========================================================== */
 
-window.addEventListener("afterprint", function () {
-
-    document.getElementById("factura80").style.display = "none";
-    document.getElementById("factura58").style.display = "none";
-    document.getElementById("facturaA4").style.display = "block";
-
-});
-
-
-/*
- * ANULAR FACTURA
- */
-
-function anularFactura() {
+function confirmarAnulacion() {
 
     const confirmar = confirm(
-        "¿Está seguro de anular esta factura?\n\n" +
-        "El inventario de los productos será devuelto " +
-        "y se realizará el movimiento correspondiente en caja."
+        "¿Estás seguro de que deseas anular esta factura?\n\n" +
+        "El inventario será devuelto y el movimiento de caja será revertido."
     );
 
     if (!confirmar) {
         return;
     }
 
-    window.location.href =
+
+    const formulario = document.createElement("form");
+
+    formulario.method = "POST";
+
+    formulario.action =
         "{{ url_for('facturacion.anular', id=venta.id) }}";
+
+
+    document.body.appendChild(formulario);
+
+    formulario.submit();
+
 }
 
 </script>
