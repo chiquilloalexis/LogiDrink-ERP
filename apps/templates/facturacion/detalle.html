@@ -10,6 +10,17 @@ Factura #{{ venta.id }}
 
 {% block extra_css %}
 
+<!-- ==========================================================
+     FUENTE ROBOTO MONO PARA FORMATOS TÉRMICOS
+     ========================================================== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+>
+
 <style>
 
 /* ==========================================================
@@ -29,6 +40,7 @@ Factura #{{ venta.id }}
     color: #111827;
     font-family: Arial, Helvetica, sans-serif;
 }
+
 
 /* ==========================================================
    ENCABEZADO A4
@@ -69,6 +81,7 @@ Factura #{{ venta.id }}
     font-weight: 700;
 }
 
+
 /* ==========================================================
    INFORMACIÓN
    ========================================================== */
@@ -104,6 +117,7 @@ Factura #{{ venta.id }}
     font-weight: 700;
 }
 
+
 /* ==========================================================
    TABLA A4
    ========================================================== */
@@ -135,6 +149,7 @@ Factura #{{ venta.id }}
     text-align: left;
 }
 
+
 /* ==========================================================
    TOTALES A4
    ========================================================== */
@@ -160,6 +175,7 @@ Factura #{{ venta.id }}
     font-weight: 800;
 }
 
+
 /* ==========================================================
    AGRADECIMIENTO
    ========================================================== */
@@ -170,6 +186,7 @@ Factura #{{ venta.id }}
     font-weight: 700;
     font-size: 16px;
 }
+
 
 /* ==========================================================
    BOTONES
@@ -218,12 +235,26 @@ Factura #{{ venta.id }}
     color: white;
 }
 
+
 /* ==========================================================
-   FORMATO TÉRMICO
+   ELEMENTOS TÉRMICOS
+   ========================================================== */
+
+.thermal-productos {
+    display: none;
+}
+
+.thermal-tabla {
+    display: none;
+}
+
+
+/* ==========================================================
+   MODO TÉRMICO
    ========================================================== */
 
 .thermal-mode {
-    font-family: "Courier New", Courier, monospace !important;
+    font-family: "Roboto Mono", "Courier New", monospace !important;
     background: white !important;
     color: #000 !important;
     box-shadow: none !important;
@@ -231,46 +262,54 @@ Factura #{{ venta.id }}
 }
 
 .thermal-mode * {
-    font-family: "Courier New", Courier, monospace !important;
+    font-family: "Roboto Mono", "Courier New", monospace !important;
 }
 
-/* Encabezado térmico */
+
+/* ==========================================================
+   ENCABEZADO TÉRMICO
+   ========================================================== */
 
 .thermal-mode .factura-header {
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .thermal-mode .factura-logo {
-    font-size: 20px;
-    font-weight: 900;
+    font-size: 18px;
+    font-weight: 700;
     margin-bottom: 3px;
 }
 
 .thermal-mode .factura-empresa {
-    font-size: 15px;
-    font-weight: 900;
+    font-size: 12px;
+    font-weight: 700;
     margin-bottom: 4px;
 }
 
 .thermal-mode .factura-dato {
-    font-size: 12px;
+    font-size: 9px;
+    line-height: 1.35;
     margin: 1px 0;
+    overflow-wrap: anywhere;
 }
 
 .thermal-mode .factura-titulo {
-    font-size: 15px;
-    font-weight: 900;
-    margin-top: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 8px;
 }
 
 .thermal-mode .factura-numero {
-    font-size: 14px;
-    font-weight: 900;
-    margin-top: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 2px;
 }
 
-/* Líneas separadoras */
+
+/* ==========================================================
+   SEPARADORES TÉRMICOS
+   ========================================================== */
 
 .thermal-separador {
     display: none;
@@ -280,10 +319,13 @@ Factura #{{ venta.id }}
     display: block;
     width: 100%;
     border-top: 1px dashed #000;
-    margin: 10px 0;
+    margin: 6px 0;
 }
 
-/* Información */
+
+/* ==========================================================
+   INFORMACIÓN TÉRMICA
+   ========================================================== */
 
 .thermal-mode .factura-info {
     display: block;
@@ -293,90 +335,145 @@ Factura #{{ venta.id }}
 .thermal-mode .info-box {
     border: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 6px 0;
 }
 
 .thermal-mode .info-title {
-    font-size: 13px;
-    font-weight: 900;
-    margin-bottom: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-bottom: 3px;
     text-transform: uppercase;
 }
 
 .thermal-mode .info-row {
     display: block;
     padding: 1px 0;
-    font-size: 12px;
+    font-size: 9px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
 }
 
 .thermal-mode .info-label {
-    font-weight: 900;
+    font-weight: 700;
 }
 
-/* Tabla térmica */
+
+/* ==========================================================
+   TABLA DE PRODUCTOS TÉRMICA
+   ========================================================== */
 
 .thermal-mode .factura-tabla {
     display: none;
 }
 
-.thermal-productos {
-    display: none;
-}
-
 .thermal-mode .thermal-productos {
     display: block;
+    width: 100%;
 }
 
-.thermal-producto {
-    margin-bottom: 10px;
-    font-size: 12px;
-    line-height: 1.45;
+.thermal-mode .thermal-tabla {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin: 4px 0 7px 0;
+    color: #000;
 }
 
-.thermal-producto-nombre {
-    font-weight: 900;
-    text-transform: uppercase;
-    margin-bottom: 3px;
+.thermal-mode .thermal-tabla th,
+.thermal-mode .thermal-tabla td {
+    border: none;
+    border-bottom: 1px dashed #000;
+    padding: 3px 1px;
+    vertical-align: top;
+    font-size: 8px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
-.thermal-linea {
-    display: block;
+.thermal-mode .thermal-tabla th {
+    font-weight: 700;
+    text-align: center;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
-.thermal-label {
-    font-weight: 900;
+.thermal-mode .thermal-tabla td {
+    text-align: center;
 }
 
-/* Totales térmicos */
+.thermal-mode .thermal-tabla th:first-child,
+.thermal-mode .thermal-tabla td:first-child {
+    text-align: left;
+}
+
+.thermal-mode .thermal-tabla th:nth-child(1),
+.thermal-mode .thermal-tabla td:nth-child(1) {
+    width: 40%;
+}
+
+.thermal-mode .thermal-tabla th:nth-child(2),
+.thermal-mode .thermal-tabla td:nth-child(2) {
+    width: 14%;
+}
+
+.thermal-mode .thermal-tabla th:nth-child(3),
+.thermal-mode .thermal-tabla td:nth-child(3) {
+    width: 10%;
+}
+
+.thermal-mode .thermal-tabla th:nth-child(4),
+.thermal-mode .thermal-tabla td:nth-child(4) {
+    width: 18%;
+}
+
+.thermal-mode .thermal-tabla th:nth-child(5),
+.thermal-mode .thermal-tabla td:nth-child(5) {
+    width: 18%;
+}
+
+
+/* ==========================================================
+   TOTALES TÉRMICOS
+   ========================================================== */
 
 .thermal-mode .totales {
     width: 100%;
-    margin: 0;
+    margin: 6px 0 0 0;
 }
 
 .thermal-mode .total-row {
     display: flex;
     justify-content: space-between;
+    gap: 5px;
     padding: 2px 0;
-    font-size: 12px;
+    font-size: 9px;
+    line-height: 1.3;
 }
 
 .thermal-mode .total-final {
     border-top: 1px solid #000;
-    margin-top: 5px;
-    padding-top: 5px;
-    font-size: 15px;
-    font-weight: 900;
+    margin-top: 3px;
+    padding-top: 4px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
-/* Gracias */
+
+/* ==========================================================
+   GRACIAS TÉRMICO
+   ========================================================== */
 
 .thermal-mode .factura-gracias {
-    margin-top: 15px;
-    font-size: 13px;
-    font-weight: 900;
+    margin-top: 8px;
+    font-size: 10px;
+    font-weight: 700;
     text-align: center;
 }
+
 
 /* ==========================================================
    80 MM
@@ -385,9 +482,10 @@ Factura #{{ venta.id }}
 .factura-documento.formato-80 {
     width: 80mm;
     max-width: 80mm;
-    padding: 5mm;
+    padding: 4mm;
     margin: 0 auto;
 }
+
 
 /* ==========================================================
    58 MM
@@ -400,43 +498,71 @@ Factura #{{ venta.id }}
     margin: 0 auto;
 }
 
+
+/* ==========================================================
+   AJUSTES ESPECÍFICOS 58 MM
+   ========================================================== */
+
 .formato-58 .factura-logo {
-    font-size: 17px;
+    font-size: 15px;
 }
 
 .formato-58 .factura-empresa {
-    font-size: 13px;
+    font-size: 10px;
 }
 
 .formato-58 .factura-dato {
-    font-size: 10px;
+    font-size: 7px;
 }
 
 .formato-58 .factura-titulo {
-    font-size: 13px;
+    font-size: 9px;
 }
 
 .formato-58 .factura-numero {
-    font-size: 12px;
+    font-size: 9px;
 }
 
 .formato-58 .info-title {
-    font-size: 11px;
+    font-size: 8px;
 }
 
-.formato-58 .info-row,
-.formato-58 .thermal-producto,
+.formato-58 .info-row {
+    font-size: 7px;
+}
+
+.formato-58 .thermal-tabla th,
+.formato-58 .thermal-tabla td {
+    font-size: 6.5px;
+    padding: 2px 1px;
+}
+
 .formato-58 .total-row {
-    font-size: 10px;
+    font-size: 7px;
 }
 
 .formato-58 .total-final {
-    font-size: 13px;
+    font-size: 9px;
 }
 
 .formato-58 .factura-gracias {
-    font-size: 11px;
+    font-size: 8px;
 }
+
+
+/* ==========================================================
+   AJUSTES ESPECÍFICOS 80 MM
+   ========================================================== */
+
+.formato-80 .thermal-tabla th,
+.formato-80 .thermal-tabla td {
+    font-size: 8px;
+}
+
+.formato-80 .factura-dato {
+    font-size: 9px;
+}
+
 
 /* ==========================================================
    RESPONSIVE PANTALLA
@@ -465,8 +591,9 @@ Factura #{{ venta.id }}
 
 }
 
+
 /* ==========================================================
-   IMPRESIÓN A4
+   IMPRESIÓN
    ========================================================== */
 
 @media print {
@@ -502,7 +629,10 @@ Factura #{{ venta.id }}
         display: none !important;
     }
 
-    /* A4 */
+
+    /* ======================================================
+       A4
+       ====================================================== */
 
     #factura-imprimir.formato-a4 {
         width: 210mm !important;
@@ -511,21 +641,39 @@ Factura #{{ venta.id }}
         padding: 20mm !important;
     }
 
-    /* 80mm */
+
+    /* ======================================================
+       80 MM
+       ====================================================== */
 
     #factura-imprimir.formato-80 {
         width: 80mm !important;
         max-width: 80mm !important;
-        padding: 5mm !important;
+        padding: 4mm !important;
     }
 
-    /* 58mm */
+
+    /* ======================================================
+       58 MM
+       ====================================================== */
 
     #factura-imprimir.formato-58 {
         width: 58mm !important;
         max-width: 58mm !important;
         padding: 3mm !important;
     }
+
+
+    /* ======================================================
+       FUENTE TÉRMICA AL IMPRIMIR
+       ====================================================== */
+
+    #factura-imprimir.thermal-mode,
+    #factura-imprimir.thermal-mode * {
+        font-family: "Roboto Mono", "Courier New", monospace !important;
+        color: #000 !important;
+    }
+
 
     @page {
         size: auto;
@@ -805,6 +953,7 @@ Factura #{{ venta.id }}
 
         <!-- =================================================
              TABLA A4
+             ESTA PARTE SE MANTIENE IGUAL
              ================================================= -->
 
         <table class="factura-tabla">
@@ -906,141 +1055,115 @@ Factura #{{ venta.id }}
 
 
         <!-- =================================================
-             PRODUCTOS FORMATO TÉRMICO
+             TABLA TÉRMICA 58 / 80 MM
              ================================================= -->
 
         <div class="thermal-productos">
 
-            {% for item in productos_factura %}
+            <table class="thermal-tabla">
 
-                <div class="thermal-producto">
+                <thead>
 
-                    <div class="thermal-producto-nombre">
+                    <tr>
 
-                        PRODUCTO:
-                        {{ item.producto.nombre }}
+                        <th>
+                            PRODUCTO
+                        </th>
 
-                    </div>
+                        <th>
+                            TIPO
+                        </th>
 
+                        <th>
+                            CANT.
+                        </th>
 
-                    {% if item.cajas > 0 %}
+                        <th>
+                            PRECIO
+                        </th>
 
-                    <div class="thermal-linea">
+                        <th>
+                            TOTAL
+                        </th>
 
-                        <span class="thermal-label">
-                            TIPO:
-                        </span>
+                    </tr>
 
-                        CAJA
+                </thead>
 
-                    </div>
+                <tbody>
 
-                    <div class="thermal-linea">
+                    {% for item in productos_factura %}
 
-                        <span class="thermal-label">
-                            CANTIDAD:
-                        </span>
+                        <!-- ==================================
+                             VENTA POR CAJA
+                             ================================== -->
 
-                        {{ item.cajas }} CAJAS
+                        {% if item.cajas > 0 %}
 
-                    </div>
+                        <tr>
 
-                    <div class="thermal-linea">
+                            <td>
+                                {{ item.producto.nombre }}
+                            </td>
 
-                        <span class="thermal-label">
-                            UNIDADES/CAJA:
-                        </span>
+                            <td>
+                                CAJA
+                            </td>
 
-                        {{ item.producto.unidades_por_caja }}
+                            <td>
+                                {{ item.cajas }}
+                            </td>
 
-                    </div>
+                            <td>
+                                ${{ "{:,.0f}".format(item.precio_caja|float).replace(",", ".") }}
+                            </td>
 
-                    <div class="thermal-linea">
+                            <td>
+                                ${{ "{:,.0f}".format((item.cajas * item.precio_caja)|float).replace(",", ".") }}
+                            </td>
 
-                        <span class="thermal-label">
-                            PRECIO CAJA:
-                        </span>
+                        </tr>
 
-                        ${{ "{:,.0f}".format(item.precio_caja|float).replace(",", ".") }}
-
-                    </div>
-
-                    {% if item.precio_unidad > 0 %}
-
-                    <div class="thermal-linea">
-
-                        <span class="thermal-label">
-                            PRECIO UNIDAD:
-                        </span>
-
-                        ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
-
-                    </div>
-
-                    {% endif %}
-
-                    <div class="thermal-linea">
-
-                        <span class="thermal-label">
-                            SUBTOTAL:
-                        </span>
-
-                        ${{ "{:,.0f}".format((item.cajas * item.precio_caja)|float).replace(",", ".") }}
-
-                    </div>
-
-                    {% endif %}
+                        {% endif %}
 
 
-                    {% if item.unidades > 0 %}
+                        <!-- ==================================
+                             VENTA POR UNIDAD
+                             ================================== -->
 
-                    <div class="thermal-linea">
+                        {% if item.unidades > 0 %}
 
-                        <span class="thermal-label">
-                            TIPO:
-                        </span>
+                        <tr>
 
-                        UNIDAD
+                            <td>
+                                {{ item.producto.nombre }}
+                            </td>
 
-                    </div>
+                            <td>
+                                UND
+                            </td>
 
-                    <div class="thermal-linea">
+                            <td>
+                                {{ item.unidades }}
+                            </td>
 
-                        <span class="thermal-label">
-                            CANTIDAD:
-                        </span>
+                            <td>
+                                ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
+                            </td>
 
-                        {{ item.unidades }} UNIDADES
+                            <td>
+                                ${{ "{:,.0f}".format((item.unidades * item.precio_unidad)|float).replace(",", ".") }}
+                            </td>
 
-                    </div>
+                        </tr>
 
-                    <div class="thermal-linea">
+                        {% endif %}
 
-                        <span class="thermal-label">
-                            PRECIO UNIDAD:
-                        </span>
+                    {% endfor %}
 
-                        ${{ "{:,.0f}".format(item.precio_unidad|float).replace(",", ".") }}
+                </tbody>
 
-                    </div>
-
-                    <div class="thermal-linea">
-
-                        <span class="thermal-label">
-                            SUBTOTAL:
-                        </span>
-
-                        ${{ "{:,.0f}".format((item.unidades * item.precio_unidad)|float).replace(",", ".") }}
-
-                    </div>
-
-                    {% endif %}
-
-                </div>
-
-                <div class="thermal-separador"></div>
-
-            {% endfor %}
+            </table>
 
         </div>
 
@@ -1113,6 +1236,11 @@ Factura #{{ venta.id }}
 
 <script>
 
+
+/* ==========================================================
+   IMPRIMIR FACTURA
+   ========================================================== */
+
 function imprimirFactura(formato) {
 
     const factura = document.getElementById("factura-imprimir");
@@ -1121,9 +1249,11 @@ function imprimirFactura(formato) {
         return;
     }
 
+
     /*
      * Quitar formatos anteriores
      */
+
     factura.classList.remove(
         "thermal-mode",
         "formato-58",
@@ -1135,6 +1265,7 @@ function imprimirFactura(formato) {
     /*
      * A4
      */
+
     if (formato === "a4") {
 
         factura.classList.add("formato-a4");
@@ -1145,6 +1276,7 @@ function imprimirFactura(formato) {
     /*
      * 80 mm
      */
+
     else if (formato === "80") {
 
         factura.classList.add(
@@ -1158,6 +1290,7 @@ function imprimirFactura(formato) {
     /*
      * 58 mm
      */
+
     else if (formato === "58") {
 
         factura.classList.add(
@@ -1169,9 +1302,10 @@ function imprimirFactura(formato) {
 
 
     /*
-     * Esperar a que el navegador aplique
-     * los estilos antes de imprimir.
+     * Esperar a que el navegador
+     * aplique los estilos.
      */
+
     setTimeout(function() {
 
         window.print();
@@ -1191,6 +1325,7 @@ function confirmarAnulacion() {
         "¿Estás seguro de que deseas anular esta factura?\n\n" +
         "El inventario será devuelto y el movimiento de caja será revertido."
     );
+
 
     if (!confirmar) {
         return;
